@@ -24,25 +24,32 @@ class HomeView extends GetView<HomeController> {
           case 2:
             return const FavoritesTab();
           case 3:
-            // Embed ProfileView, but we can pass a parameter to hide the back button if we want,
-            // or just wrap it in a Navigator if needed. Since ProfileView uses Get.back() on its leading icon,
-            // we should ideally create a customized ProfileTab or hide the leading icon if inside a tab.
-            // For now, we render ProfileView. 
             return const ProfileView();
           default:
             return const SizedBox.shrink();
         }
       }),
-      bottomNavigationBar: Obx(() => CustomBottomNavBar(
-            currentIndex: controller.selectedBottomNavIndex.value,
-            onTap: controller.changeBottomNavIndex,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-              BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorites'),
-              BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
-            ],
-          )),
+      bottomNavigationBar: Obx(
+        () => CustomBottomNavBar(
+          currentIndex: controller.selectedBottomNavIndex.value,
+          onTap: controller.changeBottomNavIndex,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_filled),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              label: 'Profile',
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

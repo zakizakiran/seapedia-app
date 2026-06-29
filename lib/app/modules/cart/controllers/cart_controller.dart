@@ -1,125 +1,166 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/cart_item_model.dart';
 import '../../../data/models/product_model.dart';
+import '../../../data/providers/cart_provider.dart';
 
 class CartController extends GetxController {
+  final CartProvider _provider = CartProvider();
+
   final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
-  
-  final RxString promoCode = ''.obs;
-  final RxBool isPromoApplied = false.obs;
+  final RxBool isLoading = true.obs;
+  final RxString currentStoreId = ''.obs;
+  final RxString currentStoreName = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadDummyCartItems();
+    fetchCart();
   }
 
-  void _loadDummyCartItems() {
-    cartItems.value = [
-      CartItemModel(
-        product: ProductModel(
-          id: '3',
-          title: 'Xbox series X',
-          description: '',
-          price: 570.00,
-          rating: 4.8,
-          reviewCount: 117,
-          positiveReviewPercentage: 94,
-          imageUrl: 'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?q=80&w=300&auto=format&fit=crop',
-          category: 'Gaming',
-          variations: ['1 TB', '825 GB', '512 GB'],
-          storeId: 's2',
-          storeName: 'Microsoft Store',
-        ),
-        quantity: 1,
-        selectedVariation: '1 TB',
-      ),
-      CartItemModel(
-        product: ProductModel(
-          id: '4',
-          title: 'Wireless Controller',
-          description: '',
-          price: 77.00,
-          rating: 4.9,
-          reviewCount: 50,
-          positiveReviewPercentage: 96,
-          imageUrl: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?q=80&w=300&auto=format&fit=crop',
-          category: 'Gaming',
-          variations: ['Blue', 'Black', 'White'],
-          storeId: 's2',
-          storeName: 'Microsoft Store',
-        ),
-        quantity: 1,
-        selectedVariation: 'Blue',
-      ),
-      CartItemModel(
-        product: ProductModel(
-          id: '5',
-          title: 'Razer Kaira Pro',
-          description: '',
-          price: 153.00,
-          rating: 4.7,
-          reviewCount: 80,
-          positiveReviewPercentage: 90,
-          imageUrl: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=300&auto=format&fit=crop',
-          category: 'Gaming',
-          variations: ['Green', 'Black'],
-          storeId: 's2',
-          storeName: 'Microsoft Store',
-        ),
-        quantity: 1,
-        selectedVariation: 'Green',
-      ),
-    ];
+  Future<void> fetchCart() async {
+    try {
+      isLoading.value = true;
+      final data = await _provider.getCart();
+      final List items = data['items'] ?? [];
+      cartItems.assignAll(
+        items.map((e) => CartItemModel.fromJson(e)).toList(),
+      );
+      if (cartItems.isNotEmpty) {
+        currentStoreId.value = cartItems.first.storeId;
+        currentStoreName.value = cartItems.first.storeName;
+      }
+    } catch (e) {
+      cartItems.clear();
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  void incrementQuantity(int index) {
-    cartItems[index].quantity++;
-    cartItems.refresh();
+  Future<bool> addToCart(
+    ProductModel product, {
+    int quantity = 1,
+    String? selectedVariation,
+  }) async {
+    if (cartItems.isNotEmpty &&
+        currentStoreId.value.isNotEmpty &&
+        product.storeId != currentStoreId.value) {
+      final confirm = await _showStoreConflictDialog(product.storeName);
+      if (!confirm) return false;
+      await clearCart();
+    }
+
+    try {
+      await _provider.addToCart(
+        productId: product.id,
+        quantity: quantity,
+        selectedVariation: selectedVariation,
+      );
+      await fetchCart();
+      return true;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.TOP,
+      );
+      return false;
+    }
   }
 
-  void decrementQuantity(int index) {
-    if (cartItems[index].quantity > 1) {
+  Future<bool> _showStoreConflictDialog(String newStoreName) async {
+    final result = await Get.dialog<bool>(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Ganti Toko?'),
+        content: Text(
+          'Cart saat ini berisi produk dari "${currentStoreName.value}". '
+          'Menambahkan produk dari "$newStoreName" akan menghapus cart saat ini.\n\n'
+          'Lanjutkan?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () => Get.back(result: true),
+            child: const Text('Ya, Ganti'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  Future<void> incrementQuantity(int index) async {
+    final item = cartItems[index];
+    try {
+      await _provider.updateCartItem(
+        productId: item.product.id,
+        quantity: item.quantity + 1,
+      );
+      cartItems[index].quantity++;
+      cartItems.refresh();
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''),
+          snackPosition: SnackPosition.TOP);
+    }
+  }
+
+  Future<void> decrementQuantity(int index) async {
+    final item = cartItems[index];
+    if (item.quantity <= 1) return;
+    try {
+      await _provider.updateCartItem(
+        productId: item.product.id,
+        quantity: item.quantity - 1,
+      );
       cartItems[index].quantity--;
       cartItems.refresh();
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''),
+          snackPosition: SnackPosition.TOP);
     }
   }
 
-  void removeItem(int index) {
-    cartItems.removeAt(index);
-  }
-
-  void applyPromoCode(String code) {
-    if (code == 'ADJ3AK') {
-      promoCode.value = code;
-      isPromoApplied.value = true;
-    } else {
-      Get.snackbar('Error', 'Invalid promo code');
+  Future<void> removeItem(int index) async {
+    final item = cartItems[index];
+    try {
+      await _provider.removeFromCart(item.product.id);
+      cartItems.removeAt(index);
+      if (cartItems.isEmpty) {
+        currentStoreId.value = '';
+        currentStoreName.value = '';
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''),
+          snackPosition: SnackPosition.TOP);
     }
   }
 
-  void removePromoCode() {
-    promoCode.value = '';
-    isPromoApplied.value = false;
+  Future<void> clearCart() async {
+    try {
+      await _provider.clearCart();
+      cartItems.clear();
+      currentStoreId.value = '';
+      currentStoreName.value = '';
+    } catch (e) {
+      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''),
+          snackPosition: SnackPosition.TOP);
+    }
   }
 
   double get subtotal {
     return cartItems.fold(0, (sum, item) => sum + item.totalPrice);
   }
 
-  double get deliveryFee => cartItems.isEmpty ? 0 : 5.00; // Mock delivery fee
-
-  double get discountAmount {
-    if (isPromoApplied.value && cartItems.isNotEmpty) {
-      return subtotal * 0.40; // 40% discount as per mockup
-    }
-    return 0;
+  int get totalItems {
+    return cartItems.fold(0, (sum, item) => sum + item.quantity);
   }
 
-  double get total => subtotal + deliveryFee - discountAmount;
-
-  void checkout() {
+  void goToCheckout() {
     if (cartItems.isEmpty) return;
-    Get.snackbar('Success', 'Proceeding to checkout', snackPosition: SnackPosition.TOP);
+    Get.toNamed('/checkout');
   }
 }

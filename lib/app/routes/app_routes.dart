@@ -15,6 +15,12 @@ abstract class Routes {
   static const SELLER_DASHBOARD = _Paths.SELLER_DASHBOARD;
   static const SELLER_PRODUCT_FORM = _Paths.SELLER_PRODUCT_FORM;
   static const STORE_DETAIL = _Paths.STORE_DETAIL;
+  static const WALLET = _Paths.WALLET;
+  static const ADDRESS_LIST = _Paths.ADDRESS_LIST;
+  static const ADDRESS_FORM = _Paths.ADDRESS_FORM;
+  static const CHECKOUT = _Paths.CHECKOUT;
+  static const ORDER_LIST = _Paths.ORDER_LIST;
+  static const ORDER_DETAIL = _Paths.ORDER_DETAIL;
 }
 
 abstract class _Paths {
@@ -31,4 +37,10 @@ abstract class _Paths {
   static const SELLER_DASHBOARD = '/seller-dashboard';
   static const SELLER_PRODUCT_FORM = '/seller-product-form';
   static const STORE_DETAIL = '/store-detail';
+  static const WALLET = '/wallet';
+  static const ADDRESS_LIST = '/address-list';
+  static const ADDRESS_FORM = '/address-form';
+  static const CHECKOUT = '/checkout';
+  static const ORDER_LIST = '/order-list';
+  static const ORDER_DETAIL = '/order-detail';
 }

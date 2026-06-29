@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../../data/models/product_model.dart';
+import '../../../data/providers/cart_provider.dart';
 import '../../../data/providers/product_provider.dart';
 import '../../../data/services/auth_service.dart';
 
@@ -10,8 +11,14 @@ class HomeController extends GetxController {
 
   final RxInt selectedBottomNavIndex = 0.obs;
   final RxString selectedCategory = 'All'.obs;
-  
-  final List<String> categories = ['All', 'Smartphones', 'Headphones', 'Laptops', 'Gaming'];
+
+  final List<String> categories = [
+    'All',
+    'Smartphones',
+    'Headphones',
+    'Laptops',
+    'Gaming',
+  ];
 
   final RxList<ProductModel> products = <ProductModel>[].obs;
   final RxBool isLoadingProducts = false.obs;
@@ -20,8 +27,8 @@ class HomeController extends GetxController {
   int currentPage = 1;
   final int limit = 12;
 
-  final RxInt cartItemCount = 3.obs; // Mock for now
-  
+  final RxInt cartItemCount = 0.obs;
+
   final ScrollController scrollController = ScrollController();
 
   final PageController bannerController = PageController();
@@ -32,18 +39,21 @@ class HomeController extends GetxController {
     {
       'title': 'Clearance\nSales',
       'subtitle': '% Up to 50%',
-      'image': 'https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=600&auto=format&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=600&auto=format&fit=crop',
     },
     {
       'title': 'New\nArrivals',
       'subtitle': 'Explore Now',
-      'image': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop',
     },
     {
       'title': 'Gadget\nFest',
       'subtitle': 'Extra 20% Off',
-      'image': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=600&auto=format&fit=crop',
-    }
+      'image':
+          'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=600&auto=format&fit=crop',
+    },
   ];
 
   @override
@@ -51,12 +61,13 @@ class HomeController extends GetxController {
     super.onInit();
     _loadProducts(isRefresh: true);
     _startBannerTimer();
-    
+    refreshCartCount();
     scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
-    if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200) {
+    if (scrollController.position.pixels >=
+        scrollController.position.maxScrollExtent - 200) {
       _loadProducts();
     }
   }
@@ -81,8 +92,10 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     _bannerTimer?.cancel();
-    bannerController.dispose();
-    scrollController.dispose();
+    // Do not dispose scrollController and bannerController here. 
+    // GetX calls onClose immediately when the route pops, but the view remains 
+    // in the tree during the transition animation. Disposing them now causes 
+    // "A ScrollController was used after being disposed" errors.
     super.onClose();
   }
 
@@ -99,7 +112,7 @@ class HomeController extends GetxController {
     try {
       final provider = ProductProvider();
       final data = await provider.getProducts(page: currentPage, limit: limit);
-      
+
       if (isRefresh) {
         if (data.isNotEmpty) {
           products.assignAll(data);
@@ -113,7 +126,8 @@ class HomeController extends GetxController {
               rating: 4.9,
               reviewCount: 300,
               positiveReviewPercentage: 98,
-              imageUrl: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?q=80&w=300&auto=format&fit=crop',
+              imageUrl:
+                  'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?q=80&w=300&auto=format&fit=crop',
               category: 'Headphones',
               variations: ['White'],
               storeId: 's1',
@@ -156,6 +170,21 @@ class HomeController extends GetxController {
 
   void navigateToCart() {
     Get.toNamed('/cart');
+  }
+
+  Future<void> refreshCartCount() async {
+    if (!_authService.isLoggedIn) return;
+    try {
+      final data = await CartProvider().getCart();
+      final List items = data['items'] ?? [];
+      int total = 0;
+      for (final item in items) {
+        total += (item['quantity'] as int? ?? 1);
+      }
+      cartItemCount.value = total;
+    } catch (_) {
+      cartItemCount.value = 0;
+    }
   }
 
   void logout() {

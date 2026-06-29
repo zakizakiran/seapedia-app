@@ -24,6 +24,7 @@ class CustomTextField extends StatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final TextInputAction? textInputAction;
   final FocusNode? focusNode;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -45,6 +46,7 @@ class CustomTextField extends StatefulWidget {
     this.contentPadding,
     this.textInputAction,
     this.focusNode,
+    this.keyboardType,
   });
 
   @override
@@ -91,7 +93,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             obscureText: widget.type == TextFieldType.password
                 ? _isObscure
                 : false,
-            keyboardType: _getKeyboardType(),
+            keyboardType: widget.keyboardType ?? _getKeyboardType(),
             textInputAction:
                 widget.textInputAction ?? _getDefaultTextInputAction(),
             maxLines: _getMaxLines(),

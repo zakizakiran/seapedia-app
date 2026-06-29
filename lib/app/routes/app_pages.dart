@@ -23,6 +23,16 @@ import '../modules/seller_product_form/bindings/seller_product_form_binding.dart
 import '../modules/seller_product_form/views/seller_product_form_view.dart';
 import '../modules/store_detail/bindings/store_detail_binding.dart';
 import '../modules/store_detail/views/store_detail_view.dart';
+import '../modules/wallet/bindings/wallet_binding.dart';
+import '../modules/wallet/views/wallet_view.dart';
+import '../modules/address/bindings/address_binding.dart';
+import '../modules/address/views/address_list_view.dart';
+import '../modules/address/views/address_form_view.dart';
+import '../modules/checkout/bindings/checkout_binding.dart';
+import '../modules/checkout/views/checkout_view.dart';
+import '../modules/order/bindings/order_binding.dart';
+import '../modules/order/views/order_list_view.dart';
+import '../modules/order/views/order_detail_view.dart';
 import '../data/services/auth_service.dart';
 
 part 'app_routes.dart';
@@ -106,6 +116,42 @@ class AppPages {
       name: _Paths.STORE_DETAIL,
       page: () => const StoreDetailView(),
       binding: StoreDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.WALLET,
+      page: () => const WalletView(),
+      binding: WalletBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADDRESS_LIST,
+      page: () => const AddressListView(),
+      binding: AddressBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADDRESS_FORM,
+      page: () => const AddressFormView(),
+      binding: AddressBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.CHECKOUT,
+      page: () => const CheckoutView(),
+      binding: CheckoutBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ORDER_LIST,
+      page: () => const OrderListView(),
+      binding: OrderBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ORDER_DETAIL,
+      page: () => const OrderDetailView(),
+      binding: OrderBinding(),
+      middlewares: [AuthMiddleware()],
     ),
   ];
 }
