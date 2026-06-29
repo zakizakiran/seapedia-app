@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import '../../../data/models/address_model.dart';
-import '../../../data/models/order_model.dart';
 import '../../../data/providers/address_provider.dart';
 import '../../../data/providers/order_provider.dart';
 import '../../../data/providers/wallet_provider.dart';
@@ -82,8 +81,11 @@ class CheckoutController extends GetxController {
 
   Future<void> checkout() async {
     if (selectedAddress.value == null) {
-      Get.snackbar('Error', 'Please select a shipping address first',
-          snackPosition: SnackPosition.TOP);
+      Get.snackbar(
+        'Error',
+        'Please select a shipping address first',
+        snackPosition: SnackPosition.TOP,
+      );
       return;
     }
 

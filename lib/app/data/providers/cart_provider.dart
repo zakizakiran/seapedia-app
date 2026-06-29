@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../core/network/api_constants.dart';
 import '../../core/network/dio_client.dart';
-import '../models/cart_item_model.dart';
 
 class CartProvider {
   final Dio _dio = DioClient().dio;
@@ -11,9 +10,7 @@ class CartProvider {
       final response = await _dio.get(ApiConstants.cart);
       return response.data['data'] ?? {};
     } on DioException catch (e) {
-      throw Exception(
-        e.response?.data['message'] ?? 'Failed to load cart',
-      );
+      throw Exception(e.response?.data['message'] ?? 'Failed to load cart');
     }
   }
 
@@ -33,9 +30,7 @@ class CartProvider {
       );
       return response.data['data'] ?? {};
     } on DioException catch (e) {
-      throw Exception(
-        e.response?.data['message'] ?? 'Failed to add to cart',
-      );
+      throw Exception(e.response?.data['message'] ?? 'Failed to add to cart');
     }
   }
 
@@ -49,9 +44,7 @@ class CartProvider {
         data: {'productId': productId, 'quantity': quantity},
       );
     } on DioException catch (e) {
-      throw Exception(
-        e.response?.data['message'] ?? 'Failed to update cart',
-      );
+      throw Exception(e.response?.data['message'] ?? 'Failed to update cart');
     }
   }
 
@@ -69,9 +62,7 @@ class CartProvider {
     try {
       await _dio.delete(ApiConstants.cart);
     } on DioException catch (e) {
-      throw Exception(
-        e.response?.data['message'] ?? 'Failed to clear cart',
-      );
+      throw Exception(e.response?.data['message'] ?? 'Failed to clear cart');
     }
   }
 }
