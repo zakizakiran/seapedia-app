@@ -5,6 +5,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_bottom_nav_bar.dart';
 import '../controllers/seller_dashboard_controller.dart';
 import 'my_products_tab.dart';
+import 'seller_orders_tab.dart';
 import 'store_profile_tab.dart';
 
 class SellerDashboardView extends GetView<SellerDashboardController> {
@@ -34,7 +35,7 @@ class SellerDashboardView extends GetView<SellerDashboardController> {
           case 1:
             return const MyProductsTab();
           case 2:
-            return Center(child: Text('Incoming Orders\n(Level 3/4)', textAlign: TextAlign.center, style: AppTextStyles.heading3));
+            return const SellerOrdersTab();
           default:
             return const SizedBox.shrink();
         }
