@@ -158,43 +158,6 @@ class RegisterView extends GetView<RegisterController> {
 
           const SizedBox(height: 24),
 
-          Text(
-            'Select Your Roles',
-            style: AppTextStyles.bodyMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Obx(
-            () => Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: controller.availableRoles.map((role) {
-                final isSelected = controller.selectedRoles.contains(role);
-                return FilterChip(
-                  label: Text(
-                    role,
-                    style: TextStyle(
-                      color: isSelected ? AppColors.primary : AppColors.grey600,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                  selected: isSelected,
-                  onSelected: (_) => controller.toggleRole(role),
-                  selectedColor: AppColors.primary.withValues(alpha: 0.1),
-                  checkmarkColor: AppColors.primary,
-                  backgroundColor: AppColors.grey100,
-                  side: BorderSide(
-                    color: isSelected ? AppColors.primary : AppColors.grey300,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
           Obx(
             () => CustomButton(
               text: 'Register',

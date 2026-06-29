@@ -69,7 +69,7 @@ class OrderModel {
           : [],
       subtotal: _parseDouble(json['subtotal']),
       deliveryFee: _parseDouble(json['deliveryFee'] ?? json['shippingFee']),
-      ppnAmount: _parseDouble(json['ppnAmount'] ?? json['ppn']),
+      ppnAmount: _parseDouble(json['ppnAmount'] ?? json['ppn'] ?? json['tax']),
       discountAmount: _parseDouble(json['discountAmount'] ?? json['discount']),
       totalAmount: _parseDouble(json['totalAmount'] ?? json['total']),
       shippingMethod: _parseString(json['deliveryMethod'] ?? json['shippingMethod'], mapKeys: ['name', 'method', 'label']),
@@ -128,8 +128,8 @@ class OrderStatusHistory {
   factory OrderStatusHistory.fromJson(Map<String, dynamic> json) {
     return OrderStatusHistory(
       status: json['status'] ?? '',
-      timestamp: json['timestamp'] != null
-          ? DateTime.tryParse(json['timestamp'].toString())
+      timestamp: (json['timestamp'] ?? json['createdAt']) != null
+          ? DateTime.tryParse((json['timestamp'] ?? json['createdAt']).toString())
           : null,
     );
   }

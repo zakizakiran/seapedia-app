@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/providers/product_provider.dart';
+import 'home_controller.dart';
 
 class SearchTabController extends GetxController {
   final TextEditingController searchController = TextEditingController();
@@ -62,7 +63,10 @@ class SearchTabController extends GetxController {
     }
   }
 
-  void navigateToProductDetail(ProductModel product) {
-    Get.toNamed('/product-detail', arguments: product);
+  void navigateToProductDetail(ProductModel product) async {
+    await Get.toNamed('/product-detail', arguments: product);
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().refreshCartCount();
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/product_card.dart';
 import '../controllers/favorites_controller.dart';
 
@@ -14,25 +15,25 @@ class FavoritesTab extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Favorites', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+        title: const Text('Favorites', style: AppTextStyles.heading3),
         centerTitle: false,
       ),
       body: Obx(() {
         if (!controller.hasFavorites) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.favorite_border, size: 80, color: AppColors.grey400),
-                SizedBox(height: 16),
+                const Icon(Icons.favorite_border, size: 80, color: AppColors.grey400),
+                const SizedBox(height: 16),
                 Text(
                   'No favorites yet',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                  style: AppTextStyles.heading5,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Items you favorite will appear here.',
-                  style: TextStyle(color: AppColors.textSecondary),
+                  style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
                 ),
               ],
             ),

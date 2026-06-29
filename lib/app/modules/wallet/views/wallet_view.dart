@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_dialog.dart';
+import '../../../core/widgets/custom_text_field.dart';
 import '../controllers/wallet_controller.dart';
 
 class WalletView extends GetView<WalletController> {
@@ -16,7 +17,7 @@ class WalletView extends GetView<WalletController> {
       appBar: AppBar(
         title: const Text(
           'Wallet',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: AppTextStyles.heading4,
         ),
         centerTitle: true,
       ),
@@ -64,43 +65,25 @@ class WalletView extends GetView<WalletController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Your Balance',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.white70),
           ),
           const SizedBox(height: 8),
           Obx(() => Text(
                 'Rp ${_formatCurrency(controller.balance)}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTextStyles.heading1.copyWith(color: Colors.white),
               )),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _showTopUpDialog(),
+            child: CustomButton(
+              text: 'Top Up',
               icon: const Icon(Icons.add, color: AppColors.primary),
-              label: const Text(
-                'Top Up',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
+              backgroundColor: Colors.white,
+              textColor: AppColors.primary,
+              width: double.infinity,
+              onPressed: () => _showTopUpDialog(),
             ),
           ),
         ],
@@ -123,22 +106,13 @@ class WalletView extends GetView<WalletController> {
           crossAxisSpacing: 10,
           childAspectRatio: 2.8,
           children: amounts.map((amount) {
-            return OutlinedButton(
+            return CustomButton(
+              type: ButtonType.outline,
+              text: 'Rp ${_formatCurrency(amount.toDouble())}',
               onPressed: () {
                 controller.topUpAmountController.text = amount.toString();
                 _showTopUpDialog();
               },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.grey300),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'Rp ${_formatCurrency(amount.toDouble())}',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
             );
           }).toList(),
         ),
@@ -161,13 +135,13 @@ class WalletView extends GetView<WalletController> {
                 color: AppColors.grey50,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Icon(Icons.receipt_long, size: 48, color: AppColors.grey300),
-                  SizedBox(height: 12),
+                  const Icon(Icons.receipt_long, size: 48, color: AppColors.grey300),
+                  const SizedBox(height: 12),
                   Text(
                     'No transactions yet',
-                    style: TextStyle(color: AppColors.textSecondary),
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -178,7 +152,7 @@ class WalletView extends GetView<WalletController> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: controller.transactions.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
+            separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final tx = controller.transactions[index];
               final isCredit =
@@ -201,7 +175,7 @@ class WalletView extends GetView<WalletController> {
                 ),
                 title: Text(
                   tx.description.isNotEmpty ? tx.description : tx.type,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                 ),
                 subtitle: tx.createdAt != null
                     ? Text(
@@ -211,7 +185,7 @@ class WalletView extends GetView<WalletController> {
                     : null,
                 trailing: Text(
                   '${isCredit ? '+' : '-'} Rp ${_formatCurrency(tx.amount)}',
-                  style: TextStyle(
+                  style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isCredit ? AppColors.success : AppColors.error,
                   ),
@@ -226,64 +200,26 @@ class WalletView extends GetView<WalletController> {
 
   void _showTopUpDialog() {
     Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Top Up Wallet',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: controller.topUpAmountController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  prefixText: 'Rp ',
-                  hintText: 'Enter amount',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: 'Cancel',
-                      type: ButtonType.outline,
-                      onPressed: () {
-                        controller.topUpAmountController.clear();
-                        Get.back();
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Obx(() => CustomButton(
-                          text: 'Top Up',
-                          isLoading: controller.isTopUpLoading.value,
-                          onPressed: controller.topUp,
-                        )),
-                  ),
-                ],
-              ),
-            ],
+      CustomDialog(
+        title: 'Top Up Wallet',
+        textConfirm: 'Top Up',
+        textCancel: 'Cancel',
+        showCancelButton: true,
+        onCancel: () {
+          controller.topUpAmountController.clear();
+        },
+        onConfirm: () {
+          if (!controller.isTopUpLoading.value) {
+            controller.topUp();
+          }
+        },
+        content: CustomTextField(
+          controller: controller.topUpAmountController,
+          type: TextFieldType.number,
+          hint: 'Enter amount',
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 8, top: 14, bottom: 14),
+            child: Text('Rp ', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
           ),
         ),
       ),

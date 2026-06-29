@@ -43,7 +43,7 @@ class ProductCard extends StatelessWidget {
                         ? Image.network(
                             product.imageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               color: AppColors.grey100,
                               child: const Icon(
                                 Icons.image_not_supported,

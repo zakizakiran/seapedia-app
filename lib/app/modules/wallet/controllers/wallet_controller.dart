@@ -54,7 +54,7 @@ class WalletController extends GetxController {
 
     final amount = double.tryParse(amountText);
     if (amount == null || amount <= 0) {
-      Get.snackbar('Error', 'Masukkan jumlah yang valid',
+      Get.snackbar('Error', 'Enter a valid amount',
           snackPosition: SnackPosition.TOP);
       return;
     }

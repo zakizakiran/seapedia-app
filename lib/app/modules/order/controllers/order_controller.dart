@@ -13,11 +13,11 @@ class OrderController extends GetxController {
 
   final List<Map<String, String>> filters = [
     {'key': 'ALL', 'label': 'All'},
-    {'key': 'SEDANG_DIKEMAS', 'label': 'Packing'},
-    {'key': 'MENUNGGU_PENGIRIM', 'label': 'Waiting'},
-    {'key': 'SEDANG_DIKIRIM', 'label': 'Delivering'},
-    {'key': 'PESANAN_SELESAI', 'label': 'Completed'},
-    {'key': 'DIKEMBALIKAN', 'label': 'Returned'},
+    {'key': 'PACKING', 'label': 'Packing'},
+    {'key': 'WAITING_FOR_DRIVER', 'label': 'Waiting'},
+    {'key': 'DELIVERING', 'label': 'Delivering'},
+    {'key': 'COMPLETED', 'label': 'Completed'},
+    {'key': 'RETURNED', 'label': 'Returned'},
   ];
 
   List<OrderModel> get filteredOrders {

@@ -40,7 +40,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static String get INITIAL {
+  static String get initial {
     if (Get.isRegistered<AuthService>()) {
       final authService = Get.find<AuthService>();
       if (authService.isLoggedIn && authService.currentUser != null) {

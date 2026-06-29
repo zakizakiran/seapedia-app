@@ -25,7 +25,7 @@ class CartProvider {
         data: {
           'productId': productId,
           'quantity': quantity,
-          if (selectedVariation != null) 'selectedVariation': selectedVariation,
+          'selectedVariation': ?selectedVariation,
         },
       );
       return response.data['data'] ?? {};

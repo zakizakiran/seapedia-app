@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/product_card.dart';
+import '../../home/controllers/home_controller.dart';
 import '../controllers/store_detail_controller.dart';
 
 class StoreDetailView extends GetView<StoreDetailController> {
@@ -90,8 +91,12 @@ class StoreDetailView extends GetView<StoreDetailController> {
                     final product = controller.products[index];
                     return ProductCard(
                       product: product,
-                      onTap: () =>
-                          Get.toNamed('/product-detail', arguments: product),
+                      onTap: () async {
+                        await Get.toNamed('/product-detail', arguments: product);
+                        if (Get.isRegistered<HomeController>()) {
+                          Get.find<HomeController>().refreshCartCount();
+                        }
+                      },
                     );
                   }, childCount: controller.products.length),
                 ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/providers/product_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/custom_dialog.dart';
 import 'store_profile_controller.dart';
 
 class MyProductsController extends GetxController {
@@ -48,17 +50,18 @@ class MyProductsController extends GetxController {
   }
 
   void confirmDeleteProduct(String id) {
-    Get.defaultDialog(
-      title: 'Delete Product',
-      middleText: 'Are you sure you want to delete this product?',
-      textConfirm: 'Delete',
-      textCancel: 'Cancel',
-      confirmTextColor: Colors.white,
-      buttonColor: Colors.red,
-      onConfirm: () {
-        Get.back(); // close dialog
-        _deleteProduct(id);
-      },
+    Get.dialog(
+      CustomDialog(
+        title: 'Delete Product',
+        content: const Text('Are you sure you want to delete this product?'),
+        textConfirm: 'Delete',
+        textCancel: 'Cancel',
+        confirmColor: AppColors.error,
+        onConfirm: () {
+          Get.back();
+          _deleteProduct(id);
+        },
+      ),
     );
   }
 

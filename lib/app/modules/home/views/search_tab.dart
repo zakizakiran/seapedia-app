@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/product_card.dart';
 import '../controllers/search_controller.dart';
 
@@ -14,7 +16,7 @@ class SearchTab extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Search', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+        title: const Text('Search', style: AppTextStyles.heading3),
         centerTitle: false,
       ),
       body: Padding(
@@ -22,22 +24,11 @@ class SearchTab extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.primary),
-              ),
-              child: TextField(
-                controller: controller.searchController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search, color: AppColors.primary),
-                  hintText: 'Search products...',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                ),
-              ),
+            CustomTextField(
+              controller: controller.searchController,
+              autofocus: true,
+              hint: 'Search products...',
+              prefixIcon: const Icon(Icons.search, color: AppColors.primary),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -47,19 +38,19 @@ class SearchTab extends StatelessWidget {
                 }
 
                 if (!controller.hasSearched.value) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'Type something to start searching.',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
                     ),
                   );
                 }
 
                 if (controller.searchResults.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'No products found.',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
                     ),
                   );
                 }

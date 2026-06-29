@@ -16,9 +16,6 @@ class RegisterController extends GetxController {
   final nameBackendError = RxnString();
   final emailBackendError = RxnString();
   final passwordBackendError = RxnString();
-  
-  final availableRoles = ['BUYER', 'SELLER', 'DRIVER'];
-  final selectedRoles = <String>[].obs;
 
   final AuthProvider _authProvider = AuthProvider();
 
@@ -62,14 +59,6 @@ class RegisterController extends GetxController {
     passwordFocusNode.dispose();
     confirmPasswordFocusNode.dispose();
     super.onClose();
-  }
-
-  void toggleRole(String role) {
-    if (selectedRoles.contains(role)) {
-      selectedRoles.remove(role);
-    } else {
-      selectedRoles.add(role);
-    }
   }
 
   String? validateName(String? value) {
@@ -121,17 +110,6 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (selectedRoles.isEmpty) {
-      Get.snackbar(
-        'Warning',
-        'Please select at least one role',
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
-      return;
-    }
-
     if (isLoading.value) return;
 
     try {
@@ -141,7 +119,7 @@ class RegisterController extends GetxController {
         email: emailController.text.trim(),
         password: passwordController.text,
         name: nameController.text.trim(),
-        roles: selectedRoles.toList(),
+        roles: ['BUYER'],
       );
 
       final authService = Get.find<AuthService>();

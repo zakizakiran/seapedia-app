@@ -25,6 +25,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final FocusNode? focusNode;
   final TextInputType? keyboardType;
+  final bool autofocus;
 
   const CustomTextField({
     super.key,
@@ -47,6 +48,7 @@ class CustomTextField extends StatefulWidget {
     this.textInputAction,
     this.focusNode,
     this.keyboardType,
+    this.autofocus = false,
   });
 
   @override
@@ -75,6 +77,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 
   @override
+  void didUpdateWidget(CustomTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      if (oldWidget.controller == null) {
+        _controller.dispose();
+      }
+      _controller = widget.controller ?? TextEditingController();
+      if (widget.initialValue != null && widget.controller == null) {
+        _controller.text = widget.initialValue!;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: widget.margin,
@@ -93,6 +109,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             obscureText: widget.type == TextFieldType.password
                 ? _isObscure
                 : false,
+            autofocus: widget.autofocus,
             keyboardType: widget.keyboardType ?? _getKeyboardType(),
             textInputAction:
                 widget.textInputAction ?? _getDefaultTextInputAction(),

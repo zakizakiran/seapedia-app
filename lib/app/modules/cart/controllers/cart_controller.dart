@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/widgets/custom_dialog.dart';
 import '../../../data/models/cart_item_model.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/providers/cart_provider.dart';
@@ -27,8 +28,8 @@ class CartController extends GetxController {
         items.map((e) => CartItemModel.fromJson(e)).toList(),
       );
       if (cartItems.isNotEmpty) {
-        currentStoreId.value = cartItems.first.storeId;
-        currentStoreName.value = cartItems.first.storeName;
+        currentStoreId.value = data['storeId']?.toString() ?? cartItems.first.storeId;
+        currentStoreName.value = data['store']?['name'] ?? cartItems.first.storeName;
       }
     } catch (e) {
       cartItems.clear();
@@ -70,24 +71,21 @@ class CartController extends GetxController {
 
   Future<bool> _showStoreConflictDialog(String newStoreName) async {
     final result = await Get.dialog<bool>(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Ganti Toko?'),
+      CustomDialog(
+        title: 'Change Store?',
         content: Text(
-          'Cart saat ini berisi produk dari "${currentStoreName.value}". '
-          'Menambahkan produk dari "$newStoreName" akan menghapus cart saat ini.\n\n'
-          'Lanjutkan?',
+          'Your cart currently contains products from "${currentStoreName.value}". '
+          'Adding a product from "$newStoreName" will clear your current cart.\n\n'
+          'Continue?',
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(result: false),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () => Get.back(result: true),
-            child: const Text('Ya, Ganti'),
-          ),
-        ],
+        textConfirm: 'Yes, Change',
+        textCancel: 'Cancel',
+        onConfirm: () {
+          Get.back(result: true);
+        },
+        onCancel: () {
+          Get.back(result: false);
+        },
       ),
     );
     return result ?? false;

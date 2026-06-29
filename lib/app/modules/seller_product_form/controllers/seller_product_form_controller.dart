@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/widgets/custom_dialog.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/providers/product_provider.dart';
 
@@ -59,8 +60,18 @@ class SellerProductFormController extends GetxController {
           stock: stock,
           imageUrl: imageUrl,
         );
-        Get.snackbar('Success', 'Product created successfully',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        Get.back(result: true);
+        Get.dialog(
+          CustomDialog(
+            title: 'Success',
+            content: const Text('Product created successfully.'),
+            textConfirm: 'OK',
+            showCancelButton: false,
+            onConfirm: () {
+              Get.back();
+            },
+          ),
+        );
       } else {
         // Update
         await _productProvider.updateProduct(
@@ -71,14 +82,32 @@ class SellerProductFormController extends GetxController {
           stock: stock,
           imageUrl: imageUrl,
         );
-        Get.snackbar('Success', 'Product updated successfully',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        Get.back(result: true);
+        Get.dialog(
+          CustomDialog(
+            title: 'Success',
+            content: const Text('Product updated successfully.'),
+            textConfirm: 'OK',
+            showCancelButton: false,
+            onConfirm: () {
+              Get.back();
+            },
+          ),
+        );
       }
-      
-      Get.back(result: true); // Return to previous screen and trigger refresh
     } catch (e) {
-      Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''),
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.dialog(
+        CustomDialog(
+          title: 'Error',
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          textConfirm: 'OK',
+          showCancelButton: false,
+          confirmColor: Colors.red,
+          onConfirm: () {
+            Get.back();
+          },
+        ),
+      );
     } finally {
       isLoading.value = false;
     }

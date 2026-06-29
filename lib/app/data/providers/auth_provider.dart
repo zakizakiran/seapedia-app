@@ -128,6 +128,31 @@ class AuthProvider {
     }
   }
 
+  Future<AuthResponseModel> addRole(String role) async {
+    try {
+      final response = await _dio.post(
+        ApiConstants.addRole,
+        data: {
+          'role': role,
+        },
+      );
+
+      return AuthResponseModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        final data = e.response?.data;
+        if (data is Map<String, dynamic>) {
+          throw Exception(data['message'] ?? 'Add role failed');
+        } else {
+          throw Exception('Add role failed: ${e.response?.statusCode}');
+        }
+      }
+      throw Exception('Connection error: ${e.message}');
+    } catch (e) {
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
   Future<Map<String, dynamic>> getProfile() async {
     try {
       final response = await _dio.get(ApiConstants.profile);

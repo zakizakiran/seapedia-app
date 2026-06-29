@@ -61,4 +61,26 @@ class OrderProvider {
       );
     }
   }
+
+  Future<Map<String, dynamic>> getCheckoutSummary(Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.post(ApiConstants.orderSummary, data: data);
+      return response.data['data'];
+    } on DioException catch (e) {
+      throw Exception(
+        e.response?.data['message'] ?? 'Failed to get checkout summary',
+      );
+    }
+  }
+
+  Future<OrderModel> processOrder(String orderId) async {
+    try {
+      final response = await _dio.patch('${ApiConstants.sellerOrders}/$orderId/process');
+      return OrderModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw Exception(
+        e.response?.data['message'] ?? 'Failed to process order',
+      );
+    }
+  }
 }

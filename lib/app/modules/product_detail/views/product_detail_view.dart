@@ -96,12 +96,11 @@ class ProductDetailView extends StatelessWidget {
                                 color: Colors.red,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
+                              child: Text(
                                 '% On sale',
-                                style: TextStyle(
+                                style: AppTextStyles.caption.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
                                 ),
                               ),
                             ),
@@ -119,10 +118,7 @@ class ProductDetailView extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             product.rating.toStringAsFixed(1),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                            style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 16),
                           const Icon(
@@ -133,15 +129,12 @@ class ProductDetailView extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '${product.positiveReviewPercentage}%',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                            style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 16),
                           Text(
                             '${product.reviewCount} reviews',
-                            style: const TextStyle(color: AppColors.grey500),
+                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.grey500),
                           ),
                         ],
                       ),
@@ -149,7 +142,7 @@ class ProductDetailView extends StatelessWidget {
 
                       Text(
                         product.description,
-                        style: const TextStyle(
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.grey500,
                           height: 1.5,
                         ),
@@ -163,65 +156,62 @@ class ProductDetailView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColors.grey200),
                         ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.store,
-                                color: AppColors.white,
-                              ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.store,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Sold by',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.grey600,
+                                        ),
+                                      ),
+                                      Text(
+                                        product.storeName.isNotEmpty
+                                            ? product.storeName
+                                            : 'Unknown Store',
+                                        style: AppTextStyles.heading4,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Sold by',
-                                    style: AppTextStyles.bodySmall.copyWith(
-                                      color: AppColors.grey600,
-                                    ),
-                                  ),
-                                  Text(
-                                    product.storeName.isNotEmpty
-                                        ? product.storeName
-                                        : 'Unknown Store',
-                                    style: AppTextStyles.heading4,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      if (product.storeId.isNotEmpty) {
-                                        Get.toNamed(
-                                          '/store-detail',
-                                          arguments: product.storeId,
-                                        );
-                                      } else {
-                                        Get.snackbar(
-                                          'Error',
-                                          'Store information not available',
-                                        );
-                                      }
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: AppColors.primary,
-                                      side: const BorderSide(
-                                        color: AppColors.primary,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    child: const Text('Visit Store'),
-                                  ),
-                                ],
-                              ),
+                            const SizedBox(height: 16),
+                            CustomButton(
+                              type: ButtonType.outline,
+                              text: 'Visit Store',
+                              onPressed: () {
+                                if (product.storeId.isNotEmpty) {
+                                  Get.toNamed(
+                                    '/store-detail',
+                                    arguments: product.storeId,
+                                  );
+                                } else {
+                                  Get.snackbar(
+                                    'Error',
+                                    'Store information not available',
+                                  );
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -257,10 +247,8 @@ class ProductDetailView extends StatelessWidget {
                                   ),
                                   child: Text(
                                     variation,
-                                    style: TextStyle(
-                                      color: isSelected
-                                          ? AppColors.primary
-                                          : AppColors.textPrimary,
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: isSelected ? AppColors.primary : AppColors.textPrimary,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -291,33 +279,94 @@ class ProductDetailView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (product.originalPrice != null)
-                      Text(
-                        'Rp ${_formatCurrency(product.originalPrice!)}',
-                        style: const TextStyle(
-                          color: AppColors.grey400,
-                          decoration: TextDecoration.lineThrough,
-                          fontSize: 14,
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (product.originalPrice != null)
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Rp ${_formatCurrency(product.originalPrice!)}',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.grey400,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Rp ${_formatCurrency(product.price)}',
+                          style: AppTextStyles.heading3,
                         ),
                       ),
-                    Text(
-                      'Rp ${_formatCurrency(product.price)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 32),
-                Expanded(
-                  child: CustomButton(
-                    text: 'Add to Cart',
-                    size: ButtonSize.large,
+                const SizedBox(width: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.grey200),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: controller.decrementQuantity,
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(8),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.remove,
+                            size: 20,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      Obx(
+                        () => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Text(
+                            '${controller.quantity.value}',
+                            style: AppTextStyles.heading6,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: controller.incrementQuantity,
+                        borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(8),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.add,
+                            size: 20,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.shopping_cart_checkout_rounded,
+                      color: Colors.white,
+                    ),
                     onPressed: controller.addToCart,
                   ),
                 ),
