@@ -9,8 +9,8 @@ class StoreProvider {
   Future<StoreModel?> getMyStore() async {
     try {
       final response = await _dio.get('/stores/seller/my-store');
-      if (response.data != null && response.data['data'] != null) {
-        return StoreModel.fromJson(response.data['data']);
+      if (response.data != null && response.data['data'] != null && response.data['data']['store'] != null) {
+        return StoreModel.fromJson(response.data['data']['store']);
       }
       return null;
     } on DioException catch (e) {
@@ -34,7 +34,7 @@ class StoreProvider {
         '/stores/seller',
         data: {'name': name, 'description': description},
       );
-      return StoreModel.fromJson(response.data['data']);
+      return StoreModel.fromJson(response.data['data']['store']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Failed to create store');
     } catch (e) {
@@ -52,8 +52,8 @@ class StoreProvider {
         data: {'name': name, 'description': description},
       );
 
-      if (response.data != null && response.data['data'] != null) {
-        return StoreModel.fromJson(response.data['data']);
+      if (response.data != null && response.data['data'] != null && response.data['data']['store'] != null) {
+        return StoreModel.fromJson(response.data['data']['store']);
       }
       return StoreModel(id: '', name: name, description: description);
     } on DioException catch (e) {

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text_field.dart';
 import '../../../data/models/address_model.dart';
 import '../controllers/checkout_controller.dart';
 
@@ -20,7 +21,7 @@ class CheckoutView extends GetView<CheckoutController> {
         ),
         title: const Text(
           'Checkout',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: AppTextStyles.heading4,
         ),
         centerTitle: true,
       ),
@@ -39,7 +40,11 @@ class CheckoutView extends GetView<CheckoutController> {
                   children: [
                     _buildAddressSection(),
                     const SizedBox(height: 20),
+                    _buildProductSection(),
+                    const SizedBox(height: 20),
                     _buildShippingMethodSection(),
+                    const SizedBox(height: 20),
+                    _buildDiscountSection(),
                     const SizedBox(height: 20),
                     _buildOrderSummary(),
                     const SizedBox(height: 20),
@@ -64,8 +69,22 @@ class CheckoutView extends GetView<CheckoutController> {
           children: [
             Text('Shipping Address', style: AppTextStyles.heading5),
             TextButton(
-              onPressed: () => Get.toNamed('/address-list'),
-              child: const Text('Change'),
+              onPressed: () async {
+                final selected = await Get.toNamed('/address-list');
+                if (selected != null && selected is AddressModel) {
+                  controller.selectedAddress.value = selected;
+                  controller.fetchSummary();
+                } else {
+                  controller.loadCheckoutData();
+                }
+              },
+              child: const Text(
+                'Change',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
@@ -77,7 +96,10 @@ class CheckoutView extends GetView<CheckoutController> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.error, style: BorderStyle.solid),
+                border: Border.all(
+                  color: AppColors.error,
+                  style: BorderStyle.solid,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -88,16 +110,19 @@ class CheckoutView extends GetView<CheckoutController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'No address yet',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
                         GestureDetector(
-                          onTap: () => Get.toNamed('/address-form'),
-                          child: const Text(
+                          onTap: () async {
+                            await Get.toNamed('/address-form');
+                            controller.loadCheckoutData();
+                          },
+                          child: Text(
                             'Add address',
-                            style: TextStyle(
+                            style: AppTextStyles.bodyMedium.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w600,
                             ),
@@ -134,23 +159,130 @@ class CheckoutView extends GetView<CheckoutController> {
               const SizedBox(width: 8),
               Text(
                 address.label,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(address.recipientName,
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(
+            address.recipientName,
+            style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
+          ),
           const SizedBox(height: 2),
-          Text(address.phone,
-              style: const TextStyle(color: AppColors.textSecondary)),
+          Text(
+            address.phone,
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+          ),
           const SizedBox(height: 2),
           Text(
             '${address.fullAddress}, ${address.city} ${address.postalCode}',
-            style: const TextStyle(color: AppColors.textSecondary, height: 1.4),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, height: 1.4),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProductSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Products', style: AppTextStyles.heading5),
+        const SizedBox(height: 12),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.grey200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.storefront,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Obx(
+                    () => Text(
+                      controller.cartController.currentStoreName.value,
+                      style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              Obx(
+                () => ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: controller.cartController.cartItems.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final item = controller.cartController.cartItems[index];
+                    final product = item.product;
+                    return Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            width: 56,
+                            height: 56,
+                            color: AppColors.grey100,
+                            child: product.imageUrl.isNotEmpty
+                                ? Image.network(
+                                    product.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, _, _) => const Icon(
+                                      Icons.image,
+                                      color: AppColors.grey300,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.image,
+                                    color: AppColors.grey300,
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                product.title,
+                                style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (item.selectedVariation != null) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Variation: ${item.selectedVariation}',
+                                  style: AppTextStyles.caption,
+                                ),
+                              ],
+                              Text(
+                                '${item.quantity}x Rp ${_formatCurrency(product.price)}',
+                                style: AppTextStyles.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -184,8 +316,7 @@ class CheckoutView extends GetView<CheckoutController> {
                       isSelected
                           ? Icons.radio_button_checked
                           : Icons.radio_button_off,
-                      color:
-                          isSelected ? AppColors.primary : AppColors.grey400,
+                      color: isSelected ? AppColors.primary : AppColors.grey400,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -194,11 +325,9 @@ class CheckoutView extends GetView<CheckoutController> {
                         children: [
                           Text(
                             controller.shippingLabels[entry.key] ?? entry.key,
-                            style: TextStyle(
+                            style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: isSelected
-                                  ? AppColors.primary
-                                  : AppColors.textPrimary,
+                              color: isSelected ? AppColors.primary : AppColors.textPrimary,
                             ),
                           ),
                           Text(
@@ -210,11 +339,9 @@ class CheckoutView extends GetView<CheckoutController> {
                     ),
                     Text(
                       'Rp ${_formatCurrency(entry.value)}',
-                      style: TextStyle(
+                      style: AppTextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.textPrimary,
+                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
                       ),
                     ),
                   ],
@@ -222,6 +349,51 @@ class CheckoutView extends GetView<CheckoutController> {
               ),
             );
           });
+        }),
+      ],
+    );
+  }
+
+  Widget _buildDiscountSection() {
+    final TextEditingController discountController = TextEditingController(
+      text: controller.discountCode.value,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Discount / Promo Code', style: AppTextStyles.heading5),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: discountController,
+                hint: 'Enter code here',
+              ),
+            ),
+            const SizedBox(width: 12),
+            CustomButton(
+              text: 'Apply',
+              onPressed: () =>
+                  controller.applyDiscountCode(discountController.text),
+            ),
+          ],
+        ),
+        Obx(() {
+          if (controller.discountCode.value.isNotEmpty &&
+              controller.discountAmount.value > 0) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'Discount code "${controller.discountCode.value}" applied!',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.success,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
         }),
       ],
     );
@@ -241,30 +413,48 @@ class CheckoutView extends GetView<CheckoutController> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.grey200),
           ),
-          child: Obx(() => Column(
-                children: [
-                  _buildSummaryRow(
-                    'Subtotal (${controller.cartController.totalItems} item)',
-                    'Rp ${_formatCurrency(controller.subtotal)}',
-                  ),
+          child: Obx(() {
+            if (controller.isFetchingSummary.value) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            return Column(
+              children: [
+                _buildSummaryRow(
+                  'Subtotal (${controller.cartController.totalItems} item)',
+                  'Rp ${_formatCurrency(controller.subtotal.value)}',
+                ),
+                const Divider(height: 24),
+                _buildSummaryRow(
+                  'Shipping Fee (${controller.shippingLabels[controller.selectedShippingMethod.value]})',
+                  'Rp ${_formatCurrency(controller.deliveryFee.value)}',
+                ),
+                if (controller.discountAmount.value > 0) ...[
                   const Divider(height: 24),
                   _buildSummaryRow(
-                    'Shipping Fee (${controller.shippingLabels[controller.selectedShippingMethod.value]})',
-                    'Rp ${_formatCurrency(controller.deliveryFee)}',
-                  ),
-                  const Divider(height: 24),
-                  _buildSummaryRow(
-                    'PPN (12%)',
-                    'Rp ${_formatCurrency(controller.ppnAmount)}',
-                  ),
-                  const Divider(height: 24),
-                  _buildSummaryRow(
-                    'Total',
-                    'Rp ${_formatCurrency(controller.totalAmount)}',
-                    isBold: true,
+                    'Discount',
+                    '- Rp ${_formatCurrency(controller.discountAmount.value)}',
+                    textColor: AppColors.success,
                   ),
                 ],
-              )),
+                const Divider(height: 24),
+                _buildSummaryRow(
+                  'PPN (12%)',
+                  'Rp ${_formatCurrency(controller.ppnAmount.value)}',
+                ),
+                const Divider(height: 24),
+                _buildSummaryRow(
+                  'Total',
+                  'Rp ${_formatCurrency(controller.totalAmount.value)}',
+                  isBold: true,
+                ),
+              ],
+            );
+          }),
         ),
       ],
     );
@@ -286,7 +476,9 @@ class CheckoutView extends GetView<CheckoutController> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: sufficient ? AppColors.successLight : AppColors.errorLight,
+                color: sufficient
+                    ? AppColors.successLight
+                    : AppColors.errorLight,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -302,13 +494,11 @@ class CheckoutView extends GetView<CheckoutController> {
                 children: [
                   const Text(
                     'Wallet Balance',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                    style: AppTextStyles.bodySmall,
                   ),
                   Text(
                     'Rp ${_formatCurrency(controller.walletBalance.value)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                    style: AppTextStyles.heading6.copyWith(
                       color: sufficient ? AppColors.textPrimary : AppColors.error,
                     ),
                   ),
@@ -317,8 +507,17 @@ class CheckoutView extends GetView<CheckoutController> {
             ),
             if (!sufficient)
               TextButton(
-                onPressed: () => Get.toNamed('/wallet'),
-                child: const Text('Top Up'),
+                onPressed: () async {
+                  await Get.toNamed('/wallet');
+                  controller.loadCheckoutData();
+                },
+                child: const Text(
+                  'Top Up',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
           ],
         );
@@ -341,35 +540,41 @@ class CheckoutView extends GetView<CheckoutController> {
       ),
       child: SafeArea(
         top: false,
-        child: Obx(() => CustomButton(
-              text: 'Pay Rp ${_formatCurrency(controller.totalAmount)}',
-              width: double.infinity,
-              size: ButtonSize.large,
-              isLoading: controller.isCheckingOut.value,
-              onPressed: controller.isBalanceSufficient
-                  ? controller.checkout
-                  : null,
-            )),
+        child: Obx(
+          () => CustomButton(
+            text: 'Pay Rp ${_formatCurrency(controller.totalAmount.value)}',
+            width: double.infinity,
+            size: ButtonSize.large,
+            isLoading: controller.isCheckingOut.value,
+            onPressed: controller.isBalanceSufficient
+                ? controller.checkout
+                : null,
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildSummaryRow(String label, String value, {bool isBold = false}) {
+  Widget _buildSummaryRow(
+    String label,
+    String value, {
+    bool isBold = false,
+    Color? textColor,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: AppTextStyles.bodyMedium.copyWith(
             color: isBold ? AppColors.textPrimary : AppColors.textSecondary,
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
-            fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-            fontSize: isBold ? 18 : 14,
+          style: (isBold ? AppTextStyles.heading5 : AppTextStyles.bodyMedium).copyWith(
+            color: textColor ?? AppColors.textPrimary,
           ),
         ),
       ],
@@ -390,9 +595,11 @@ class CheckoutView extends GetView<CheckoutController> {
   }
 
   String _formatCurrency(double amount) {
-    return amount.toStringAsFixed(0).replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    );
+    return amount
+        .toStringAsFixed(0)
+        .replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]}.',
+        );
   }
 }

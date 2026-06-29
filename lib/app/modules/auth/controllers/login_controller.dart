@@ -18,10 +18,6 @@ class LoginController extends GetxController {
   final emailFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   @override
   void onClose() {
@@ -31,7 +27,6 @@ class LoginController extends GetxController {
     passwordFocusNode.dispose();
     super.onClose();
   }
-
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -70,7 +65,7 @@ class LoginController extends GetxController {
       return;
     }
 
-    if (isLoading.value) return; // Prevent multiple simultaneous requests
+    if (isLoading.value) return;
 
     try {
       isLoading.value = true;
@@ -94,12 +89,12 @@ class LoginController extends GetxController {
       );
 
       if (response.requiresRoleSelection == true) {
-        // Navigate to role selector
         Get.offAllNamed('/role-selection');
       } else {
-        // Single role / Admin
         final user = response.user;
-        if (user != null && (user.activeRole == 'SELLER' || (user.roles.contains('SELLER') && user.roles.length == 1))) {
+        if (user != null &&
+            (user.activeRole == 'SELLER' ||
+                (user.roles.contains('SELLER') && user.roles.length == 1))) {
           Get.offAllNamed('/seller-dashboard');
         } else {
           Get.offAllNamed('/home');
@@ -109,35 +104,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         e.toString().replaceAll('Exception: ', ''),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> loginWithGoogle() async {
-    if (isLoading.value) return; // Prevent multiple simultaneous requests
-
-    try {
-      isLoading.value = true;
-
-      await Future.delayed(const Duration(seconds: 1));
-
-      // TODO: Implement Google login
-      Get.snackbar(
-        'Info',
-        'Google login will be implemented soon',
-        backgroundColor: Colors.blue,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Google login failed: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

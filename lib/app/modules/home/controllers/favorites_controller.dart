@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/services/favorites_service.dart';
+import 'home_controller.dart';
 
 class FavoritesController extends GetxController {
   final FavoritesService _favoritesService = Get.find<FavoritesService>();
@@ -17,7 +18,10 @@ class FavoritesController extends GetxController {
     return _favoritesService.isFavorite(productId);
   }
 
-  void navigateToProductDetail(ProductModel product) {
-    Get.toNamed('/product-detail', arguments: product);
+  void navigateToProductDetail(ProductModel product) async {
+    await Get.toNamed('/product-detail', arguments: product);
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().refreshCartCount();
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_dialog.dart';
 import '../controllers/cart_controller.dart';
 
 class CartView extends GetView<CartController> {
@@ -72,7 +73,7 @@ class CartView extends GetView<CartController> {
               child: ListView.separated(
                 padding: const EdgeInsets.all(16),
                 itemCount: controller.cartItems.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const Divider(height: 32, color: AppColors.grey200),
                 itemBuilder: (context, index) {
                   final item = controller.cartItems[index];
@@ -91,7 +92,7 @@ class CartView extends GetView<CartController> {
                               ? Image.network(
                                   product.imageUrl,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Icon(
+                                  errorBuilder: (_, _, _) => const Icon(
                                     Icons.image_not_supported,
                                     color: AppColors.grey300,
                                   ),
@@ -287,19 +288,16 @@ class CartView extends GetView<CartController> {
 
   void _confirmClear() {
     Get.dialog(
-      AlertDialog(
-        title: const Text('Clear Cart'),
+      CustomDialog(
+        title: 'Clear Cart',
         content: const Text('Are you sure you want to remove all items from the cart?'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              controller.clearCart();
-            },
-            child: const Text('Remove', style: TextStyle(color: AppColors.error)),
-          ),
-        ],
+        textConfirm: 'Remove',
+        textCancel: 'Cancel',
+        confirmColor: AppColors.error,
+        onConfirm: () {
+          Get.back();
+          controller.clearCart();
+        },
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/store_model.dart';
 import '../../../data/providers/store_provider.dart';
+import '../../../data/providers/report_provider.dart';
 
 class StoreProfileController extends GetxController {
   final nameController = TextEditingController();
@@ -9,10 +10,12 @@ class StoreProfileController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   final StoreProvider _storeProvider = StoreProvider();
+  final ReportProvider _reportProvider = ReportProvider();
   
   final RxBool isLoading = false.obs;
   final RxBool isSaving = false.obs;
   final Rx<StoreModel?> currentStore = Rx<StoreModel?>(null);
+  final RxDouble totalIncome = 0.0.obs;
 
   @override
   void onInit() {
@@ -22,8 +25,14 @@ class StoreProfileController extends GetxController {
 
   @override
   void onClose() {
-    nameController.dispose();
-    descriptionController.dispose();
+    // Delay disposing controllers to prevent 'used after being disposed' 
+    // exceptions when navigating away quickly (e.g., logout).
+    final nController = nameController;
+    final dController = descriptionController;
+    Future.delayed(const Duration(milliseconds: 500), () {
+      nController.dispose();
+      dController.dispose();
+    });
     super.onClose();
   }
 
@@ -36,6 +45,11 @@ class StoreProfileController extends GetxController {
       if (store != null) {
         nameController.text = store.name;
         descriptionController.text = store.description;
+        
+        try {
+          final incomeData = await _reportProvider.getSellerIncome();
+          totalIncome.value = double.parse(incomeData['totalIncome']?.toString() ?? '0');
+        } catch (_) {}
       }
     } catch (e) {
       Get.snackbar('Error', e.toString().replaceAll('Exception: ', ''),

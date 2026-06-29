@@ -20,14 +20,34 @@ class AddressModel {
   });
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
+    String rawAddress = json['fullAddress'] ?? json['address'] ?? '';
+    String parsedFull = rawAddress;
+    String parsedCity = json['city'] ?? '';
+    String parsedPostal = json['postalCode'] ?? '';
+
+    if (parsedCity.isEmpty && parsedPostal.isEmpty) {
+      final commaIndex = rawAddress.lastIndexOf(',');
+      if (commaIndex != -1) {
+        parsedFull = rawAddress.substring(0, commaIndex).trim();
+        final cityPostal = rawAddress.substring(commaIndex + 1).trim();
+        final spaceIndex = cityPostal.lastIndexOf(' ');
+        if (spaceIndex != -1) {
+          parsedCity = cityPostal.substring(0, spaceIndex).trim();
+          parsedPostal = cityPostal.substring(spaceIndex + 1).trim();
+        } else {
+          parsedCity = cityPostal;
+        }
+      }
+    }
+
     return AddressModel(
       id: json['id']?.toString() ?? '',
       label: json['title'] ?? json['label'] ?? '',
       recipientName: json['recipientName'] ?? '',
       phone: json['phoneNumber'] ?? json['phone'] ?? '',
-      fullAddress: json['fullAddress'] ?? json['address'] ?? '',
-      city: json['city'] ?? '',
-      postalCode: json['postalCode'] ?? '',
+      fullAddress: parsedFull,
+      city: parsedCity,
+      postalCode: parsedPostal,
       isDefault: json['isDefault'] ?? false,
     );
   }

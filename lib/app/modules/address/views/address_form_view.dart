@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../controllers/address_controller.dart';
@@ -15,7 +16,7 @@ class AddressFormView extends GetView<AddressController> {
       appBar: AppBar(
         title: Text(
           controller.isEditing ? 'Edit Address' : 'Add Address',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: AppTextStyles.heading4.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),

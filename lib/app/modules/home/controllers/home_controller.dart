@@ -25,7 +25,7 @@ class HomeController extends GetxController {
   final RxBool isLoadingMore = false.obs;
   final RxBool hasMoreProducts = true.obs;
   int currentPage = 1;
-  final int limit = 12;
+  final int limit = 6; // Dikurangi agar paginasi lebih terasa
 
   final RxInt cartItemCount = 0.obs;
 
@@ -67,7 +67,7 @@ class HomeController extends GetxController {
 
   void _onScroll() {
     if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 200) {
+        scrollController.position.maxScrollExtent - 50) {
       _loadProducts();
     }
   }
@@ -158,18 +158,23 @@ class HomeController extends GetxController {
       }
     }
     selectedBottomNavIndex.value = index;
+    if (index == 0) {
+      refreshCartCount();
+    }
   }
 
   void selectCategory(String category) {
     selectedCategory.value = category;
   }
 
-  void navigateToProductDetail(ProductModel product) {
-    Get.toNamed('/product-detail', arguments: product);
+  void navigateToProductDetail(ProductModel product) async {
+    await Get.toNamed('/product-detail', arguments: product);
+    refreshCartCount();
   }
 
-  void navigateToCart() {
-    Get.toNamed('/cart');
+  void navigateToCart() async {
+    await Get.toNamed('/cart');
+    refreshCartCount();
   }
 
   Future<void> refreshCartCount() async {
@@ -189,6 +194,5 @@ class HomeController extends GetxController {
 
   void logout() {
     _authService.logout();
-    Get.offAllNamed('/login');
   }
 }

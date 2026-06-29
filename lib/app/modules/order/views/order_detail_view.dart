@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../data/models/order_model.dart';
 import '../controllers/order_controller.dart';
 
 class OrderDetailView extends GetView<OrderController> {
@@ -161,7 +162,7 @@ class OrderDetailView extends GetView<OrderController> {
     );
   }
 
-  Widget _buildStoreAndItems(order) {
+  Widget _buildStoreAndItems(OrderModel order) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -204,7 +205,7 @@ class OrderDetailView extends GetView<OrderController> {
                               ? Image.network(
                                   item.productImage,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Icon(
+                                  errorBuilder: (_, _, _) => const Icon(
                                     Icons.image,
                                     color: AppColors.grey300,
                                   ),
@@ -305,7 +306,7 @@ class OrderDetailView extends GetView<OrderController> {
     );
   }
 
-  Widget _buildPaymentDetail(order) {
+  Widget _buildPaymentDetail(OrderModel order) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -400,14 +401,19 @@ class OrderDetailView extends GetView<OrderController> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'SEDANG_DIKEMAS':
+      case 'PACKING':
         return AppColors.statusPacking;
       case 'MENUNGGU_PENGIRIM':
+      case 'WAITING_FOR_DRIVER':
         return AppColors.statusWaitingDriver;
       case 'SEDANG_DIKIRIM':
+      case 'DELIVERING':
         return AppColors.statusDelivering;
       case 'PESANAN_SELESAI':
+      case 'COMPLETED':
         return AppColors.statusCompleted;
       case 'DIKEMBALIKAN':
+      case 'RETURNED':
         return AppColors.statusReturned;
       default:
         return AppColors.grey500;
@@ -417,14 +423,19 @@ class OrderDetailView extends GetView<OrderController> {
   String _getStatusLabel(String status) {
     switch (status) {
       case 'SEDANG_DIKEMAS':
+      case 'PACKING':
         return 'Packing';
       case 'MENUNGGU_PENGIRIM':
+      case 'WAITING_FOR_DRIVER':
         return 'Waiting for Courier';
       case 'SEDANG_DIKIRIM':
+      case 'DELIVERING':
         return 'Delivering';
       case 'PESANAN_SELESAI':
+      case 'COMPLETED':
         return 'Completed';
       case 'DIKEMBALIKAN':
+      case 'RETURNED':
         return 'Returned';
       default:
         return status;
@@ -434,14 +445,19 @@ class OrderDetailView extends GetView<OrderController> {
   IconData _getStatusIcon(String status) {
     switch (status) {
       case 'SEDANG_DIKEMAS':
+      case 'PACKING':
         return Icons.inventory;
       case 'MENUNGGU_PENGIRIM':
+      case 'WAITING_FOR_DRIVER':
         return Icons.hourglass_top;
       case 'SEDANG_DIKIRIM':
+      case 'DELIVERING':
         return Icons.local_shipping;
       case 'PESANAN_SELESAI':
+      case 'COMPLETED':
         return Icons.check_circle;
       case 'DIKEMBALIKAN':
+      case 'RETURNED':
         return Icons.undo;
       default:
         return Icons.info;

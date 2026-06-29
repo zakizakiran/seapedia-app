@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/custom_button.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -11,12 +11,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(
-          'Profile',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-        ),
-      ),
+      appBar: AppBar(title: Text('Profile', style: AppTextStyles.heading3)),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -36,182 +31,190 @@ class ProfileView extends GetView<ProfileController> {
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-                  child: const Icon(
-                    Icons.person,
-                    size: 50,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  user['name'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              Center(
-                child: Text(
-                  user['email'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              const Text(
-                'Roles Information',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.grey200),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInfoRow('Available Roles', roles),
-                    const Divider(height: 24),
-                    _buildInfoRow(
-                      'Active Role',
-                      activeRole,
-                      isHighlighted: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+                    child: const Icon(
+                      Icons.person,
+                      size: 50,
+                      color: AppColors.primary,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    user['name'] ?? '',
+                    style: AppTextStyles.heading4.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    user['email'] ?? '',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
 
-              const Text(
-                'Financial Summary',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.grey200),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (financialSummary['buyer'] != null) ...[
+                Text('Roles Information', style: AppTextStyles.heading5),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.grey200),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('Available Roles', roles),
+                      const Divider(height: 24),
                       _buildInfoRow(
-                        'Wallet Balance (Buyer)',
-                        'Rp ${financialSummary['buyer']['walletBalance'] ?? 0}',
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                    if (financialSummary['seller'] != null) ...[
-                      _buildInfoRow(
-                        'Total Income (Seller)',
-                        'Rp ${financialSummary['seller']['totalIncome'] ?? 0}',
-                      ),
-                      const SizedBox(height: 8),
-                      _buildInfoRow(
-                        'Store Name',
-                        financialSummary['seller']['store']?['name'] ??
-                            'Not setup',
+                        'Active Role',
+                        activeRole,
+                        isHighlighted: true,
                       ),
                     ],
-                    if (financialSummary.isEmpty)
-                      const Text(
-                        'No financial data available',
-                        style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                Text('Financial Summary', style: AppTextStyles.heading5),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.grey200),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (financialSummary['buyer'] != null) ...[
+                        _buildInfoRow(
+                          'Wallet Balance (Buyer)',
+                          'Rp ${financialSummary['buyer']['walletBalance'] ?? 0}',
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                      if (financialSummary['seller'] != null) ...[
+                        _buildInfoRow(
+                          'Total Income (Seller)',
+                          'Rp ${financialSummary['seller']['totalIncome'] ?? 0}',
+                        ),
+                        const SizedBox(height: 8),
+                        _buildInfoRow(
+                          'Store Name',
+                          financialSummary['seller']['store']?['name'] ??
+                              'Not setup',
+                        ),
+                      ],
+                      if (financialSummary.isEmpty)
+                        Text(
+                          'No financial data available',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                Text('My Account', style: AppTextStyles.heading5),
+                const SizedBox(height: 12),
+                Material(
+                  color: AppColors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: AppColors.grey200),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildMenuTile(
+                        icon: Icons.account_balance_wallet,
+                        title: 'Wallet',
+                        onTap: () async {
+                          await Get.toNamed('/wallet');
+                          controller.fetchProfile();
+                        },
                       ),
-                  ],
+                      const Divider(height: 1),
+                      _buildMenuTile(
+                        icon: Icons.receipt_long,
+                        title: 'My Orders',
+                        onTap: () async {
+                          await Get.toNamed('/order-list');
+                          controller.fetchProfile();
+                        },
+                      ),
+                      const Divider(height: 1),
+                      _buildMenuTile(
+                        icon: Icons.location_on,
+                        title: 'Shipping Address',
+                        onTap: () async {
+                          await Get.toNamed('/address-list');
+                          controller.fetchProfile();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
+                if ((user['roles'] as List<dynamic>?) != null &&
+                    (user['roles'] as List<dynamic>).length > 1) ...[
+                  const SizedBox(height: 12),
+                  _buildSettingItem(
+                    icon: Icons.swap_horiz,
+                    title: 'Change Role',
+                    subtitle: 'Switch between your available roles',
+                    onTap: () => Get.toNamed('/role-selection'),
+                  ),
+                ],
+                if ((user['roles'] as List<dynamic>?) != null &&
+                    !(user['roles'] as List<dynamic>).contains('SELLER')) ...[
+                  const SizedBox(height: 12),
+                  _buildSettingItem(
+                    icon: Icons.storefront,
+                    title: 'Become a Seller',
+                    subtitle: 'Start selling products on Seapedia',
+                    onTap: () => controller.addRole('SELLER'),
+                  ),
+                ],
+                if ((user['roles'] as List<dynamic>?) != null &&
+                    !(user['roles'] as List<dynamic>).contains('DRIVER')) ...[
+                  const SizedBox(height: 12),
+                  _buildSettingItem(
+                    icon: Icons.local_shipping,
+                    title: 'Become a Driver',
+                    subtitle: 'Start delivering orders',
+                    onTap: () => controller.addRole('DRIVER'),
+                  ),
+                ],
+                const SizedBox(height: 12),
 
-              const Text(
-                'My Account',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                _buildSettingItem(
+                  icon: Icons.logout,
+                  title: 'Log Out',
+                  subtitle: 'Sign out of your account',
+                  onTap: controller.logout,
+                  isDestructive: true,
                 ),
-              ),
-              const SizedBox(height: 12),
-              Material(
-                color: AppColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: const BorderSide(color: AppColors.grey200),
-                ),
-                child: Column(
-                  children: [
-                    _buildMenuTile(
-                      icon: Icons.account_balance_wallet,
-                      title: 'Wallet',
-                      onTap: () async {
-                        await Get.toNamed('/wallet');
-                        controller.fetchProfile();
-                      },
-                    ),
-                    const Divider(height: 1),
-                    _buildMenuTile(
-                      icon: Icons.receipt_long,
-                      title: 'My Orders',
-                      onTap: () async {
-                        await Get.toNamed('/order-list');
-                        controller.fetchProfile();
-                      },
-                    ),
-                    const Divider(height: 1),
-                    _buildMenuTile(
-                      icon: Icons.location_on,
-                      title: 'Shipping Address',
-                      onTap: () async {
-                        await Get.toNamed('/address-list');
-                        controller.fetchProfile();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 48),
-
-              CustomButton(
-                text: 'Logout',
-                width: double.infinity,
-                type: ButtonType.outline,
-                textColor: Colors.red,
-                borderColor: Colors.red,
-                onPressed: controller.logout,
-              ),
-            ],
+              ],
+            ),
           ),
-        ));
+        );
       }),
     );
   }
@@ -228,9 +231,8 @@ class ProfileView extends GetView<ProfileController> {
           flex: 2,
           child: Text(
             label,
-            style: const TextStyle(
+            style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
-              fontSize: 14,
             ),
           ),
         ),
@@ -238,9 +240,8 @@ class ProfileView extends GetView<ProfileController> {
           flex: 3,
           child: Text(
             value,
-            style: TextStyle(
+            style: AppTextStyles.bodyMedium.copyWith(
               color: isHighlighted ? AppColors.primary : AppColors.textPrimary,
-              fontSize: 14,
               fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
             ),
           ),
@@ -252,6 +253,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildMenuTile({
     required IconData icon,
     required String title,
+    String? subtitle,
     required VoidCallback onTap,
   }) {
     return ListTile(
@@ -263,11 +265,80 @@ class ProfileView extends GetView<ProfileController> {
           color: AppColors.textPrimary,
         ),
       ),
-      trailing: const Icon(
-        Icons.chevron_right,
-        color: AppColors.grey400,
-      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            )
+          : null,
+      trailing: const Icon(Icons.chevron_right, color: AppColors.grey400),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildSettingItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    final color = isDestructive ? AppColors.error : AppColors.textPrimary;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDestructive
+                ? AppColors.error.withValues(alpha: 0.3)
+                : AppColors.grey200,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDestructive
+                    ? AppColors.error.withValues(alpha: 0.1)
+                    : AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: isDestructive ? AppColors.error : AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.heading6.copyWith(color: color),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.grey600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.grey400),
+          ],
+        ),
+      ),
     );
   }
 }

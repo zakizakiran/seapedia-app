@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/custom_button.dart';
 import '../controllers/seller_orders_controller.dart';
 
 class SellerOrdersTab extends StatelessWidget {
@@ -19,25 +20,36 @@ class SellerOrdersTab extends StatelessWidget {
 
           if (controller.orders.isEmpty) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.inbox,
-                    size: 64,
-                    color: AppColors.grey300,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Belum ada pesanan masuk',
-                    style: AppTextStyles.heading4,
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Pesanan dari buyer akan muncul di sini',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.inbox,
+                        size: 64,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'No incoming orders',
+                      style: AppTextStyles.heading3,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Orders from buyers will appear here',
+                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.grey600),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -54,7 +66,7 @@ class SellerOrdersTab extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: AppColors.grey200),
                   ),
                   child: Column(
@@ -62,40 +74,87 @@ class SellerOrdersTab extends StatelessWidget {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Order #${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          _buildStatusBadge(order.status),
-                        ],
-                      ),
-                      const Divider(height: 20),
-                      ...order.items.map((item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
+                          Expanded(
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
                               children: [
+                                const Icon(
+                                  Icons.receipt_long,
+                                  size: 16,
+                                  color: AppColors.grey500,
+                                ),
+                                const SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
-                                    '${item.productName} x${item.quantity}',
+                                    'Order #${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
+                                    style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                Text(
-                                  'Rp ${_formatCurrency(item.subtotal)}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: _buildStatusBadge(order.status),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 24),
+                      ...order.items.map((item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    width: 56,
+                                    height: 56,
+                                    color: AppColors.grey100,
+                                    child: item.productImage.isNotEmpty
+                                        ? Image.network(
+                                            item.productImage,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, _, _) => const Icon(
+                                              Icons.image,
+                                              color: AppColors.grey300,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.image,
+                                            color: AppColors.grey300,
+                                          ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.productName,
+                                        style: AppTextStyles.bodyMedium.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${item.quantity}x Rp ${_formatCurrency(item.price > 0 ? item.price : order.totalAmount / order.items.length)}',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           )),
-                      const Divider(height: 20),
+                      const Divider(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -113,15 +172,35 @@ class SellerOrdersTab extends StatelessWidget {
                                 ),
                             ],
                           ),
-                          Text(
-                            'Rp ${_formatCurrency(order.totalAmount)}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Total Income',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              Text(
+                                'Rp ${_formatCurrency(order.totalAmount)}',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
+                      if (order.status == 'PACKING' || order.status == 'SEDANG_DIKEMAS') ...[
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
+                            onPressed: () => controller.processOrder(order.id),
+                            text: 'Process Order',
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 );
@@ -144,9 +223,8 @@ class SellerOrdersTab extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: AppTextStyles.caption.copyWith(
           color: color,
-          fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -156,14 +234,19 @@ class SellerOrdersTab extends StatelessWidget {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'SEDANG_DIKEMAS':
+      case 'PACKING':
         return AppColors.statusPacking;
       case 'MENUNGGU_PENGIRIM':
+      case 'WAITING_FOR_DRIVER':
         return AppColors.statusWaitingDriver;
       case 'SEDANG_DIKIRIM':
+      case 'DELIVERING':
         return AppColors.statusDelivering;
       case 'PESANAN_SELESAI':
+      case 'COMPLETED':
         return AppColors.statusCompleted;
       case 'DIKEMBALIKAN':
+      case 'RETURNED':
         return AppColors.statusReturned;
       default:
         return AppColors.grey500;
@@ -173,15 +256,20 @@ class SellerOrdersTab extends StatelessWidget {
   String _getStatusLabel(String status) {
     switch (status) {
       case 'SEDANG_DIKEMAS':
-        return 'Sedang Dikemas';
+      case 'PACKING':
+        return 'Packing';
       case 'MENUNGGU_PENGIRIM':
-        return 'Menunggu Pengirim';
+      case 'WAITING_FOR_DRIVER':
+        return 'Waiting for Driver';
       case 'SEDANG_DIKIRIM':
-        return 'Sedang Dikirim';
+      case 'DELIVERING':
+        return 'Delivering';
       case 'PESANAN_SELESAI':
-        return 'Selesai';
+      case 'COMPLETED':
+        return 'Completed';
       case 'DIKEMBALIKAN':
-        return 'Dikembalikan';
+      case 'RETURNED':
+        return 'Returned';
       default:
         return status;
     }
@@ -190,11 +278,11 @@ class SellerOrdersTab extends StatelessWidget {
   String _getShippingLabel(String method) {
     switch (method) {
       case 'INSTANT':
-        return 'Pengiriman Instant';
+        return 'Instant Shipping';
       case 'NEXT_DAY':
-        return 'Pengiriman Next Day';
+        return 'Next Day Shipping';
       case 'REGULAR':
-        return 'Pengiriman Regular';
+        return 'Regular Shipping';
       default:
         return method;
     }

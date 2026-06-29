@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_dialog.dart';
 import '../controllers/address_controller.dart';
 
 class AddressListView extends GetView<AddressController> {
@@ -13,9 +14,9 @@ class AddressListView extends GetView<AddressController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Shipping Address',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: AppTextStyles.heading4.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -37,9 +38,9 @@ class AddressListView extends GetView<AddressController> {
                 const SizedBox(height: 16),
                 Text('No address yet', style: AppTextStyles.heading4),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Add a shipping address for checkout',
-                  style: TextStyle(color: AppColors.textSecondary),
+                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 24),
                 CustomButton(
@@ -62,21 +63,27 @@ class AddressListView extends GetView<AddressController> {
             itemCount: controller.addresses.length,
             itemBuilder: (context, index) {
               final address = controller.addresses[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Material(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: address.isDefault
-                        ? AppColors.primary
-                        : AppColors.grey200,
-                    width: address.isDefault ? 2 : 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  child: InkWell(
+                    onTap: () => Get.back(result: address),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: address.isDefault
+                              ? AppColors.primary
+                              : AppColors.grey200,
+                          width: address.isDefault ? 2 : 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -101,12 +108,11 @@ class AddressListView extends GetView<AddressController> {
                                     color: AppColors.primary.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     'Default',
-                                    style: TextStyle(
+                                    style: AppTextStyles.bodyMedium.copyWith(
                                       color: AppColors.primary,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -128,11 +134,11 @@ class AddressListView extends GetView<AddressController> {
                               value: 'edit',
                               child: Text('Edit'),
                             ),
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'delete',
                               child: Text(
                                 'Delete',
-                                style: TextStyle(color: AppColors.error),
+                                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error),
                               ),
                             ),
                           ],
@@ -142,24 +148,27 @@ class AddressListView extends GetView<AddressController> {
                     const SizedBox(height: 8),
                     Text(
                       address.recipientName,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       address.phone,
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${address.fullAddress}, ${address.city} ${address.postalCode}',
-                      style: const TextStyle(
+                      style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                         height: 1.4,
                       ),
                     ),
                   ],
                 ),
-              );
+              ),
+            ),
+          ),
+        );
             },
           ),
         );
@@ -180,19 +189,16 @@ class AddressListView extends GetView<AddressController> {
 
   void _confirmDelete(String id) {
     Get.dialog(
-      AlertDialog(
-        title: const Text('Delete Address'),
+      CustomDialog(
+        title: 'Delete Address',
         content: const Text('Are you sure you want to delete this address?'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              controller.deleteAddress(id);
-            },
-            child: const Text('Delete', style: TextStyle(color: AppColors.error)),
-          ),
-        ],
+        textConfirm: 'Delete',
+        textCancel: 'Cancel',
+        confirmColor: AppColors.error,
+        onConfirm: () {
+          Get.back();
+          controller.deleteAddress(id);
+        },
       ),
     );
   }

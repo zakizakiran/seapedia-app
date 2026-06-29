@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/category_chip.dart';
 import '../../../core/widgets/custom_button.dart';
+import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/product_card.dart';
 import '../controllers/home_controller.dart';
 
@@ -15,7 +16,7 @@ class HomeTab extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Discover', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+        title: const Text('Discover', style: AppTextStyles.heading3),
         centerTitle: false,
         actions: [
           IconButton(
@@ -35,7 +36,7 @@ class HomeTab extends GetView<HomeController> {
                           ),
                           child: Text(
                             controller.cartItemCount.value.toString(),
-                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            style: AppTextStyles.captionBold.copyWith(color: Colors.white, fontSize: 10),
                           ),
                         )
                       : const SizedBox()),
@@ -53,20 +54,9 @@ class HomeTab extends GetView<HomeController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.primary),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search, color: AppColors.primary),
-                  hintText: 'Search',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                ),
-              ),
+            const CustomTextField(
+              hint: 'Search',
+              prefixIcon: Icon(Icons.search, color: AppColors.primary),
             ),
             const SizedBox(height: 24),
 
@@ -100,10 +90,8 @@ class HomeTab extends GetView<HomeController> {
                           children: [
                             Text(
                               banner['title']!,
-                              style: const TextStyle(
+                              style: AppTextStyles.heading2.copyWith(
                                 color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
                                 height: 1.1,
                               ),
                             ),
@@ -116,10 +104,8 @@ class HomeTab extends GetView<HomeController> {
                               ),
                               child: Text(
                                 banner['subtitle']!,
-                                style: const TextStyle(
+                                style: AppTextStyles.captionBold.copyWith(
                                   color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
                                 ),
                               ),
                             ),
@@ -235,15 +221,15 @@ class HomeTab extends GetView<HomeController> {
               ),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'What do you think of SEAPEDIA?',
                     style: AppTextStyles.heading3,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Read what others say and share your experience!',
-                    style: TextStyle(color: AppColors.textSecondary),
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),

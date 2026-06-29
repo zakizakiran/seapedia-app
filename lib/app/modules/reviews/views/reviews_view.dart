@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../controllers/reviews_controller.dart';
@@ -26,7 +27,7 @@ class ReviewsView extends GetView<ReviewsController> {
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text('What others say', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+              child: Text('What others say', style: AppTextStyles.heading5),
             ),
           ),
           Obx(() {
@@ -66,7 +67,7 @@ class ReviewsView extends GetView<ReviewsController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Write a Review', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text('Write a Review', style: AppTextStyles.heading6),
           const SizedBox(height: 12),
           CustomTextField(
             controller: controller.nameController,
@@ -81,7 +82,7 @@ class ReviewsView extends GetView<ReviewsController> {
             maxLines: 3,
           ),
           const SizedBox(height: 12),
-          const Text('Rating', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          Text('Rating', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Obx(() => Row(
                 children: List.generate(5, (index) {
@@ -127,7 +128,7 @@ class ReviewsView extends GetView<ReviewsController> {
             children: [
               Text(
                 review['reviewerName'] ?? 'Anonymous',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
                 children: List.generate(
@@ -144,7 +145,7 @@ class ReviewsView extends GetView<ReviewsController> {
           const SizedBox(height: 8),
           Text(
             review['comment'] ?? '',
-            style: const TextStyle(color: AppColors.textSecondary),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

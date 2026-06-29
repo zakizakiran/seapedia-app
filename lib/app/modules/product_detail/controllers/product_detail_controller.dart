@@ -9,6 +9,7 @@ class ProductDetailController extends GetxController {
 
   final RxString selectedVariation = ''.obs;
   final RxBool isAddingToCart = false.obs;
+  final RxInt quantity = 1.obs;
 
   @override
   void onInit() {
@@ -21,6 +22,16 @@ class ProductDetailController extends GetxController {
 
   void selectVariation(String variation) {
     selectedVariation.value = variation;
+  }
+
+  void incrementQuantity() {
+    quantity.value++;
+  }
+
+  void decrementQuantity() {
+    if (quantity.value > 1) {
+      quantity.value--;
+    }
   }
 
   Future<void> addToCart() async {
@@ -44,6 +55,7 @@ class ProductDetailController extends GetxController {
 
       final success = await cartController.addToCart(
         product,
+        quantity: quantity.value,
         selectedVariation: selectedVariation.value.isNotEmpty
             ? selectedVariation.value
             : null,
@@ -51,8 +63,8 @@ class ProductDetailController extends GetxController {
 
       if (success) {
         Get.snackbar(
-          'Berhasil',
-          '${product.title} ditambahkan ke keranjang',
+          'Success',
+          '${product.title} added to cart',
           snackPosition: SnackPosition.TOP,
         );
 

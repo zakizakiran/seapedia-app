@@ -15,12 +15,20 @@ class CheckoutController extends GetxController {
   final RxString selectedShippingMethod = 'REGULAR'.obs;
   final RxBool isLoading = true.obs;
   final RxBool isCheckingOut = false.obs;
+  final RxBool isFetchingSummary = false.obs;
   final RxDouble walletBalance = 0.0.obs;
+  
+  final RxString discountCode = ''.obs;
+  final RxDouble subtotal = 0.0.obs;
+  final RxDouble deliveryFee = 0.0.obs;
+  final RxDouble ppnAmount = 0.0.obs;
+  final RxDouble discountAmount = 0.0.obs;
+  final RxDouble totalAmount = 0.0.obs;
 
   final Map<String, double> shippingFees = {
-    'INSTANT': 25000,
-    'NEXT_DAY': 15000,
-    'REGULAR': 10000,
+    'INSTANT': 50000,
+    'NEXT_DAY': 30000,
+    'REGULAR': 15000,
   };
 
   final Map<String, String> shippingLabels = {
@@ -31,23 +39,15 @@ class CheckoutController extends GetxController {
 
   CartController get cartController => Get.find<CartController>();
 
-  double get subtotal => cartController.subtotal;
-
-  double get deliveryFee => shippingFees[selectedShippingMethod.value] ?? 10000;
-
-  double get ppnAmount => (subtotal) * 0.12;
-
-  double get totalAmount => subtotal + deliveryFee + ppnAmount;
-
-  bool get isBalanceSufficient => walletBalance.value >= totalAmount;
+  bool get isBalanceSufficient => walletBalance.value >= totalAmount.value;
 
   @override
   void onInit() {
     super.onInit();
-    _loadCheckoutData();
+    loadCheckoutData();
   }
 
-  Future<void> _loadCheckoutData() async {
+  Future<void> loadCheckoutData() async {
     try {
       isLoading.value = true;
       final results = await Future.wait([
@@ -60,6 +60,8 @@ class CheckoutController extends GetxController {
 
       final defaultAddr = addresses.firstWhereOrNull((a) => a.isDefault);
       selectedAddress.value = defaultAddr ?? addresses.firstOrNull;
+      
+      await fetchSummary();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -71,12 +73,48 @@ class CheckoutController extends GetxController {
     }
   }
 
+  Future<void> fetchSummary() async {
+    if (selectedAddress.value == null) return;
+    
+    try {
+      isFetchingSummary.value = true;
+      final data = {
+        'addressId': selectedAddress.value!.id,
+        'deliveryMethod': selectedShippingMethod.value,
+        if (discountCode.value.isNotEmpty) 'discountCode': discountCode.value,
+      };
+      
+      final summary = await _orderProvider.getCheckoutSummary(data);
+      subtotal.value = double.parse(summary['subtotal'].toString());
+      deliveryFee.value = double.parse(summary['deliveryFee'].toString());
+      ppnAmount.value = double.parse(summary['tax'].toString());
+      discountAmount.value = double.parse(summary['discount'].toString());
+      totalAmount.value = double.parse(summary['total'].toString());
+    } catch (e) {
+      Get.snackbar(
+        'Warning',
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.TOP,
+      );
+      discountCode.value = ''; // Reset invalid code
+    } finally {
+      isFetchingSummary.value = false;
+    }
+  }
+
   void selectShippingMethod(String method) {
     selectedShippingMethod.value = method;
+    fetchSummary();
   }
 
   void selectAddress(AddressModel address) {
     selectedAddress.value = address;
+    fetchSummary();
+  }
+  
+  void applyDiscountCode(String code) {
+    discountCode.value = code;
+    fetchSummary();
   }
 
   Future<void> checkout() async {
@@ -103,6 +141,7 @@ class CheckoutController extends GetxController {
       final data = {
         'addressId': selectedAddress.value!.id,
         'deliveryMethod': selectedShippingMethod.value,
+        if (discountCode.value.isNotEmpty) 'discountCode': discountCode.value,
       };
 
       final order = await _orderProvider.checkout(data);

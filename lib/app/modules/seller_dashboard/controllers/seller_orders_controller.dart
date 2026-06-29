@@ -29,4 +29,25 @@ class SellerOrdersController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> processOrder(String orderId) async {
+    try {
+      isLoading.value = true;
+      await _provider.processOrder(orderId);
+      Get.snackbar(
+        'Success',
+        'Order status updated successfully',
+        snackPosition: SnackPosition.TOP,
+      );
+      await fetchOrders();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.TOP,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

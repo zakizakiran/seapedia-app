@@ -27,8 +27,8 @@ class RoleSelectionController extends GetxController {
   Future<void> confirmRole() async {
     if (selectedRole.value == null) {
       Get.snackbar(
-        'Peringatan',
-        'Pilih salah satu peran (role) terlebih dahulu',
+        'Warning',
+        'Please select a role first',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
