@@ -45,7 +45,9 @@ class RoleSelectionController extends GetxController {
       
       await _authService.saveAuthData(response);
 
-      if (selectedRole.value == 'SELLER') {
+      if (selectedRole.value == 'ADMIN') {
+        Get.offAllNamed('/admin-dashboard');
+      } else if (selectedRole.value == 'SELLER') {
         Get.offAllNamed('/seller-dashboard');
       } else if (selectedRole.value == 'DRIVER') {
         Get.offAllNamed('/driver-dashboard');

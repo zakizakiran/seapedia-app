@@ -19,10 +19,11 @@ class RoleSelectionView extends GetView<RoleSelectionController> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.shield,
-                size: 80,
-                color: AppColors.white,
+              Image.asset(
+                'assets/images/Logo.png',
+                width: 80,
+                height: 80,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 32),
               Text(

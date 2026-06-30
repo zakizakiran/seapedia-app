@@ -38,6 +38,19 @@ import '../modules/driver_dashboard/bindings/driver_dashboard_binding.dart';
 import '../modules/driver_dashboard/views/driver_dashboard_view.dart';
 import '../modules/driver_job_detail/bindings/driver_job_detail_binding.dart';
 import '../modules/driver_job_detail/views/driver_job_detail_view.dart';
+import '../modules/admin_dashboard/bindings/admin_dashboard_binding.dart';
+import '../modules/admin_dashboard/views/admin_dashboard_view.dart';
+import '../modules/admin_users/bindings/admin_users_binding.dart';
+import '../modules/admin_users/views/admin_users_view.dart';
+import '../modules/admin_stores/bindings/admin_stores_binding.dart';
+import '../modules/admin_stores/views/admin_stores_view.dart';
+import '../modules/admin_products/bindings/admin_products_binding.dart';
+import '../modules/admin_products/views/admin_products_view.dart';
+import '../modules/admin_orders/bindings/admin_orders_binding.dart';
+import '../modules/admin_orders/views/admin_orders_view.dart';
+import '../modules/admin_jobs/bindings/admin_jobs_binding.dart';
+import '../modules/admin_jobs/views/admin_jobs_view.dart';
+import '../modules/admin_dashboard/views/admin_create_discount_view.dart';
 
 part 'app_routes.dart';
 
@@ -49,6 +62,11 @@ class AppPages {
       final authService = Get.find<AuthService>();
       if (authService.isLoggedIn && authService.currentUser != null) {
         final user = authService.currentUser!;
+
+        if (user.activeRole == 'ADMIN' ||
+            (user.roles.contains('ADMIN') && user.roles.length == 1)) {
+          return Routes.ADMIN_DASHBOARD;
+        }
 
         if (user.roles.length > 1 && user.activeRole == null) {
           return Routes.ROLE_SELECTION;
@@ -173,6 +191,47 @@ class AppPages {
       page: () => const DriverJobDetailView(),
       binding: DriverJobDetailBinding(),
       middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_DASHBOARD,
+      page: () => const AdminDashboardView(),
+      binding: AdminDashboardBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_USERS,
+      page: () => const AdminUsersView(),
+      binding: AdminUsersBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_STORES,
+      page: () => const AdminStoresView(),
+      binding: AdminStoresBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_PRODUCTS,
+      page: () => const AdminProductsView(),
+      binding: AdminProductsBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_ORDERS,
+      page: () => const AdminOrdersView(),
+      binding: AdminOrdersBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_JOBS,
+      page: () => const AdminJobsView(),
+      binding: AdminJobsBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ADMIN_CREATE_DISCOUNT,
+      page: () => const AdminCreateDiscountView(),
+      binding: AdminDashboardBinding(),
     ),
   ];
 }

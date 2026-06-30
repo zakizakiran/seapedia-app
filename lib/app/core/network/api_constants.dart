@@ -37,4 +37,19 @@ class ApiConstants {
   static String driverJobDetail(String id) => '/deliveries/jobs/$id';
   static String driverTakeJob(String id) => '/deliveries/jobs/$id/take';
   static String driverCompleteJob(String id) => '/deliveries/jobs/$id/complete';
+
+  static const String adminDashboard = '/admin/dashboard';
+  static const String adminOverdueOrders = '/admin/overdue-orders';
+  static const String adminOverdueProcess = '/admin/overdue/process';
+  static const String adminSimulateDay = '/admin/simulate-day';
+  static const String adminSimulateDayReset = '/admin/simulate-day/reset';
+  static const String adminTimeInfo = '/admin/time-info';
+  static const String adminStores = '/admin/stores';
+  static const String adminProducts = '/admin/products';
+  static const String adminDeliveryJobs = '/admin/delivery-jobs';
+  static const String adminUsers = '/admin/users';
+  static const String adminOrders = '/admin/orders';
+
+  static const String discountsVouchers = '/discounts/vouchers';
+  static const String discountsPromos = '/discounts/promos';
 }

@@ -56,7 +56,7 @@ class ProductDetailView extends StatelessWidget {
                     image: product.imageUrl.isNotEmpty
                         ? DecorationImage(
                             image: NetworkImage(product.imageUrl),
-                            fit: BoxFit.contain,
+                            fit: BoxFit.cover,
                           )
                         : null,
                   ),
@@ -108,37 +108,7 @@ class ProductDetailView extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.orange,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            product.rating.toStringAsFixed(1),
-                            style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 16),
-                          const Icon(
-                            Icons.thumb_up,
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${product.positiveReviewPercentage}%',
-                            style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 16),
-                          Text(
-                            '${product.reviewCount} reviews',
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.grey500),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
+
 
                       Text(
                         product.description,

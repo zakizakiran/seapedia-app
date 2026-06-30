@@ -23,6 +23,13 @@ abstract class Routes {
   static const ORDER_DETAIL = _Paths.ORDER_DETAIL;
   static const DRIVER_DASHBOARD = _Paths.DRIVER_DASHBOARD;
   static const DRIVER_JOB_DETAIL = _Paths.DRIVER_JOB_DETAIL;
+  static const ADMIN_DASHBOARD = _Paths.ADMIN_DASHBOARD;
+  static const ADMIN_USERS = _Paths.ADMIN_USERS;
+  static const ADMIN_STORES = _Paths.ADMIN_STORES;
+  static const ADMIN_PRODUCTS = _Paths.ADMIN_PRODUCTS;
+  static const ADMIN_ORDERS = _Paths.ADMIN_ORDERS;
+  static const ADMIN_JOBS = _Paths.ADMIN_JOBS;
+  static const ADMIN_CREATE_DISCOUNT = _Paths.ADMIN_CREATE_DISCOUNT;
 }
 
 abstract class _Paths {
@@ -47,4 +54,11 @@ abstract class _Paths {
   static const ORDER_DETAIL = '/order-detail';
   static const DRIVER_DASHBOARD = '/driver-dashboard';
   static const DRIVER_JOB_DETAIL = '/driver-job-detail';
+  static const ADMIN_DASHBOARD = '/admin-dashboard';
+  static const ADMIN_USERS = '/admin-users';
+  static const ADMIN_STORES = '/admin-stores';
+  static const ADMIN_PRODUCTS = '/admin-products';
+  static const ADMIN_ORDERS = '/admin-orders';
+  static const ADMIN_JOBS = '/admin-jobs';
+  static const ADMIN_CREATE_DISCOUNT = '/admin-create-discount';
 }

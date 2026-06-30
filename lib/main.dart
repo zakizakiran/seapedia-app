@@ -8,7 +8,7 @@ import 'app/data/services/favorites_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Get.putAsync(() => AuthService().init());
   await Get.putAsync(() => FavoritesService().init());
 
