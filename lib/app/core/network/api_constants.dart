@@ -1,6 +1,6 @@
 class ApiConstants {
   static String get baseUrl {
-    return 'https://unmumbled-wendolyn-nonfraternal.ngrok-free.dev/api';
+    return 'http://129.226.211.8/api';
   }
 
   static const String login = '/auth/login';
@@ -31,4 +31,10 @@ class ApiConstants {
 
   static const String buyerSpending = '/reports/buyer/spending';
   static const String sellerIncome = '/reports/seller/income';
+
+  static const String driverDashboard = '/deliveries/dashboard';
+  static const String driverAvailableJobs = '/deliveries/available';
+  static String driverJobDetail(String id) => '/deliveries/jobs/$id';
+  static String driverTakeJob(String id) => '/deliveries/jobs/$id/take';
+  static String driverCompleteJob(String id) => '/deliveries/jobs/$id/complete';
 }

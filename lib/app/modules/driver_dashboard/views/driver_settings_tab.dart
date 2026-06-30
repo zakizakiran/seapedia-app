@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../controllers/seller_dashboard_controller.dart';
+import '../controllers/driver_dashboard_controller.dart';
 
-class SellerSettingsTab extends GetView<SellerDashboardController> {
-  const SellerSettingsTab({super.key});
+class DriverSettingsTab extends GetView<DriverDashboardController> {
+  const DriverSettingsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +63,12 @@ class SellerSettingsTab extends GetView<SellerDashboardController> {
             ),
             const SizedBox(height: 16),
           ],
-          if (!controller.availableRoles.contains('DRIVER')) ...[
+          if (!controller.availableRoles.contains('SELLER')) ...[
             _buildSettingItem(
-              icon: Icons.local_shipping,
-              title: 'Become a Driver',
-              subtitle: 'Start delivering orders',
-              onTap: () => controller.addRole('DRIVER'),
+              icon: Icons.storefront,
+              title: 'Become a Seller',
+              subtitle: 'Start selling products on Seapedia',
+              onTap: () => controller.addRole('SELLER'),
             ),
             const SizedBox(height: 16),
           ],
@@ -124,7 +124,7 @@ class SellerSettingsTab extends GetView<SellerDashboardController> {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.grey400),
+            const Icon(Icons.chevron_right, color: AppColors.grey400),
           ],
         ),
       ),

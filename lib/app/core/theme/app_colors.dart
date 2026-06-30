@@ -3,30 +3,24 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primary = Color(0xff428475); // Blue ocean
+  static const Color primary = Color(0xff428475);
   static const Color primaryLight = Color(0xFF3B82F6);
   static const Color primaryDark = Color(0xFF1E40AF);
 
-  static const Color secondary = Color(0xFFF97316); // Orange for CTA
+  static const Color secondary = Color(0xFFF97316);
   static const Color secondaryLight = Color(0xFFFA8D47);
   static const Color secondaryDark = Color(0xFFEA580C);
-  
-  static const Color accentGreen = Color(0xFF1CB55C); // Green for buyer UI accents
+
+  static const Color alternative = Color.fromARGB(255, 146, 51, 255);
+
+  static const Color accentGreen = Color(0xFF1CB55C);
   static const Color accentGreenLight = Color(0xFF4ADE80);
 
-  static const Color statusPacking = Color(
-    0xFFF59E0B,
-  ); // Yellow - Sedang Dikemas
-  static const Color statusWaitingDriver = Color(
-    0xFFF97316,
-  ); // Orange - Menunggu Pengirim
-  static const Color statusDelivering = Color(
-    0xFF3B82F6,
-  ); // Blue - Sedang Dikirim
-  static const Color statusCompleted = Color(
-    0xFF10B981,
-  ); // Green - Pesanan Selesai
-  static const Color statusReturned = Color(0xFFEF4444); // Red - Dikembalikan
+  static const Color statusPacking = Color(0xFFF59E0B);
+  static const Color statusWaitingDriver = Color(0xFFF97316);
+  static const Color statusDelivering = Color(0xFF3B82F6);
+  static const Color statusCompleted = Color(0xFF10B981);
+  static const Color statusReturned = Color(0xFFEF4444);
 
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);

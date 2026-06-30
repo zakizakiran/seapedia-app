@@ -92,10 +92,16 @@ class LoginController extends GetxController {
         Get.offAllNamed('/role-selection');
       } else {
         final user = response.user;
-        if (user != null &&
-            (user.activeRole == 'SELLER' ||
-                (user.roles.contains('SELLER') && user.roles.length == 1))) {
-          Get.offAllNamed('/seller-dashboard');
+        if (user != null) {
+          if (user.activeRole == 'SELLER' ||
+              (user.roles.contains('SELLER') && user.roles.length == 1)) {
+            Get.offAllNamed('/seller-dashboard');
+          } else if (user.activeRole == 'DRIVER' ||
+              (user.roles.contains('DRIVER') && user.roles.length == 1)) {
+            Get.offAllNamed('/driver-dashboard');
+          } else {
+            Get.offAllNamed('/home');
+          }
         } else {
           Get.offAllNamed('/home');
         }

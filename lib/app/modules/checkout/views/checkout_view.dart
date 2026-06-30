@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/custom_button.dart';
@@ -268,7 +269,7 @@ class CheckoutView extends GetView<CheckoutController> {
                                 ),
                               ],
                               Text(
-                                '${item.quantity}x Rp ${_formatCurrency(product.price)}',
+                                '${item.quantity}x ${_formatCurrency(product.price)}',
                                 style: AppTextStyles.bodySmall,
                               ),
                             ],
@@ -338,7 +339,7 @@ class CheckoutView extends GetView<CheckoutController> {
                       ),
                     ),
                     Text(
-                      'Rp ${_formatCurrency(entry.value)}',
+                      _formatCurrency(entry.value),
                       style: AppTextStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isSelected ? AppColors.primary : AppColors.textPrimary,
@@ -426,30 +427,30 @@ class CheckoutView extends GetView<CheckoutController> {
               children: [
                 _buildSummaryRow(
                   'Subtotal (${controller.cartController.totalItems} item)',
-                  'Rp ${_formatCurrency(controller.subtotal.value)}',
+                  _formatCurrency(controller.subtotal.value),
                 ),
                 const Divider(height: 24),
                 _buildSummaryRow(
                   'Shipping Fee (${controller.shippingLabels[controller.selectedShippingMethod.value]})',
-                  'Rp ${_formatCurrency(controller.deliveryFee.value)}',
+                  _formatCurrency(controller.deliveryFee.value),
                 ),
                 if (controller.discountAmount.value > 0) ...[
                   const Divider(height: 24),
                   _buildSummaryRow(
                     'Discount',
-                    '- Rp ${_formatCurrency(controller.discountAmount.value)}',
+                    _formatCurrency(-controller.discountAmount.value),
                     textColor: AppColors.success,
                   ),
                 ],
                 const Divider(height: 24),
                 _buildSummaryRow(
                   'PPN (12%)',
-                  'Rp ${_formatCurrency(controller.ppnAmount.value)}',
+                  _formatCurrency(controller.ppnAmount.value),
                 ),
                 const Divider(height: 24),
                 _buildSummaryRow(
                   'Total',
-                  'Rp ${_formatCurrency(controller.totalAmount.value)}',
+                  _formatCurrency(controller.totalAmount.value),
                   isBold: true,
                 ),
               ],
@@ -497,7 +498,7 @@ class CheckoutView extends GetView<CheckoutController> {
                     style: AppTextStyles.bodySmall,
                   ),
                   Text(
-                    'Rp ${_formatCurrency(controller.walletBalance.value)}',
+                    _formatCurrency(controller.walletBalance.value),
                     style: AppTextStyles.heading6.copyWith(
                       color: sufficient ? AppColors.textPrimary : AppColors.error,
                     ),
@@ -542,7 +543,7 @@ class CheckoutView extends GetView<CheckoutController> {
         top: false,
         child: Obx(
           () => CustomButton(
-            text: 'Pay Rp ${_formatCurrency(controller.totalAmount.value)}',
+            text: 'Pay ${_formatCurrency(controller.totalAmount.value)}',
             width: double.infinity,
             size: ButtonSize.large,
             isLoading: controller.isCheckingOut.value,
@@ -595,11 +596,10 @@ class CheckoutView extends GetView<CheckoutController> {
   }
 
   String _formatCurrency(double amount) {
-    return amount
-        .toStringAsFixed(0)
-        .replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (match) => '${match[1]}.',
-        );
+    return NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    ).format(amount);
   }
 }

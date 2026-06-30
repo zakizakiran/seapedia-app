@@ -14,10 +14,11 @@ class HomeController extends GetxController {
 
   final List<String> categories = [
     'All',
-    'Smartphones',
-    'Headphones',
-    'Laptops',
-    'Gaming',
+    'Gadget',
+    'Fashion',
+    'Beauty',
+    'Food',
+    'Home',
   ];
 
   final RxList<ProductModel> products = <ProductModel>[].obs;
@@ -95,8 +96,11 @@ class HomeController extends GetxController {
     // Do not dispose scrollController and bannerController here. 
     // GetX calls onClose immediately when the route pops, but the view remains 
     // in the tree during the transition animation. Disposing them now causes 
-    // "A ScrollController was used after being disposed" errors.
     super.onClose();
+  }
+
+  Future<void> refreshData() async {
+    await _loadProducts(isRefresh: true);
   }
 
   Future<void> _loadProducts({bool isRefresh = false}) async {
@@ -111,30 +115,14 @@ class HomeController extends GetxController {
 
     try {
       final provider = ProductProvider();
-      final data = await provider.getProducts(page: currentPage, limit: limit);
+      final data = await provider.getProducts(
+        page: currentPage, 
+        limit: limit,
+        category: selectedCategory.value,
+      );
 
       if (isRefresh) {
-        if (data.isNotEmpty) {
-          products.assignAll(data);
-        } else {
-          products.value = [
-            ProductModel(
-              id: '1',
-              title: 'AirPods',
-              description: 'Apple AirPods with great sound quality.',
-              price: 132.00,
-              rating: 4.9,
-              reviewCount: 300,
-              positiveReviewPercentage: 98,
-              imageUrl:
-                  'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?q=80&w=300&auto=format&fit=crop',
-              category: 'Headphones',
-              variations: ['White'],
-              storeId: 's1',
-              storeName: 'Apple Store',
-            ),
-          ];
-        }
+        products.assignAll(data);
       } else {
         products.addAll(data);
       }
@@ -164,7 +152,10 @@ class HomeController extends GetxController {
   }
 
   void selectCategory(String category) {
-    selectedCategory.value = category;
+    if (selectedCategory.value != category) {
+      selectedCategory.value = category;
+      _loadProducts(isRefresh: true);
+    }
   }
 
   void navigateToProductDetail(ProductModel product) async {

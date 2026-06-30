@@ -6,6 +6,7 @@ import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_dialog.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../controllers/wallet_controller.dart';
+import 'package:intl/intl.dart';
 
 class WalletView extends GetView<WalletController> {
   const WalletView({super.key});
@@ -71,7 +72,7 @@ class WalletView extends GetView<WalletController> {
           ),
           const SizedBox(height: 8),
           Obx(() => Text(
-                'Rp ${_formatCurrency(controller.balance)}',
+                _formatCurrency(controller.balance),
                 style: AppTextStyles.heading1.copyWith(color: Colors.white),
               )),
           const SizedBox(height: 20),
@@ -108,7 +109,7 @@ class WalletView extends GetView<WalletController> {
           children: amounts.map((amount) {
             return CustomButton(
               type: ButtonType.outline,
-              text: 'Rp ${_formatCurrency(amount.toDouble())}',
+              text: _formatCurrency(amount.toDouble()),
               onPressed: () {
                 controller.topUpAmountController.text = amount.toString();
                 _showTopUpDialog();
@@ -174,7 +175,9 @@ class WalletView extends GetView<WalletController> {
                   ),
                 ),
                 title: Text(
-                  tx.description.isNotEmpty ? tx.description : tx.type,
+                  (tx.description.isNotEmpty ? tx.description : tx.type)
+                      .replaceAll(RegExp(r'(?i)dummy\s*'), '')
+                      .trim(),
                   style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                 ),
                 subtitle: tx.createdAt != null
@@ -184,7 +187,9 @@ class WalletView extends GetView<WalletController> {
                       )
                     : null,
                 trailing: Text(
-                  '${isCredit ? '+' : '-'} Rp ${_formatCurrency(tx.amount)}',
+                  isCredit 
+                      ? '+${_formatCurrency(tx.amount.abs())}' 
+                      : _formatCurrency(-tx.amount.abs()),
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isCredit ? AppColors.success : AppColors.error,
@@ -227,10 +232,11 @@ class WalletView extends GetView<WalletController> {
   }
 
   String _formatCurrency(double amount) {
-    return amount.toStringAsFixed(0).replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (match) => '${match[1]}.',
-    );
+    return NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    ).format(amount);
   }
 
   String _formatDate(DateTime date) {

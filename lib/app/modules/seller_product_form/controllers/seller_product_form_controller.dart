@@ -14,6 +14,15 @@ class SellerProductFormController extends GetxController {
   final stockController = TextEditingController();
   final imageUrlController = TextEditingController();
 
+  final List<String> categories = [
+    'Gadget',
+    'Fashion',
+    'Beauty',
+    'Food',
+    'Home',
+  ];
+  final RxString selectedCategory = 'Gadget'.obs;
+
   final RxBool isLoading = false.obs;
   ProductModel? editingProduct;
 
@@ -27,6 +36,9 @@ class SellerProductFormController extends GetxController {
       priceController.text = editingProduct!.price.toInt().toString();
       stockController.text = editingProduct!.stock.toString();
       imageUrlController.text = editingProduct!.imageUrl;
+      if (categories.contains(editingProduct!.category)) {
+        selectedCategory.value = editingProduct!.category;
+      }
     }
   }
 
@@ -59,6 +71,7 @@ class SellerProductFormController extends GetxController {
           price: price,
           stock: stock,
           imageUrl: imageUrl,
+          category: selectedCategory.value,
         );
         Get.back(result: true);
         Get.dialog(
@@ -81,6 +94,7 @@ class SellerProductFormController extends GetxController {
           price: price,
           stock: stock,
           imageUrl: imageUrl,
+          category: selectedCategory.value,
         );
         Get.back(result: true);
         Get.dialog(

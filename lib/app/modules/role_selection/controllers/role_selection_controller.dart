@@ -47,6 +47,8 @@ class RoleSelectionController extends GetxController {
 
       if (selectedRole.value == 'SELLER') {
         Get.offAllNamed('/seller-dashboard');
+      } else if (selectedRole.value == 'DRIVER') {
+        Get.offAllNamed('/driver-dashboard');
       } else {
         Get.offAllNamed('/home');
       }

@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../controllers/profile_controller.dart';
+import 'package:intl/intl.dart';
+import '../../../core/utils/string_extensions.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -22,9 +24,14 @@ class ProfileView extends GetView<ProfileController> {
           return const Center(child: Text('Failed to load profile'));
         }
 
-        final roles = (user['roles'] as List<dynamic>?)?.join(', ') ?? '';
         final activeRole = user['activeRole'] ?? 'None';
         final financialSummary = user['financialSummary'] ?? {};
+
+        final currencyFormatter = NumberFormat.currency(
+          locale: 'id_ID',
+          symbol: 'Rp ',
+          decimalDigits: 0,
+        );
 
         return RefreshIndicator(
           onRefresh: controller.fetchProfile,
@@ -64,7 +71,7 @@ class ProfileView extends GetView<ProfileController> {
                 ),
                 const SizedBox(height: 32),
 
-                Text('Roles Information', style: AppTextStyles.heading5),
+                Text('Active Role', style: AppTextStyles.heading5),
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
@@ -74,15 +81,24 @@ class ProfileView extends GetView<ProfileController> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.grey200),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      _buildInfoRow('Available Roles', roles),
-                      const Divider(height: 24),
-                      _buildInfoRow(
-                        'Active Role',
-                        activeRole,
-                        isHighlighted: true,
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.badge, color: AppColors.primary, size: 24),
+                      ),
+                      const SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Current Session', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                          const SizedBox(height: 4),
+                          Text(activeRole, style: AppTextStyles.heading6.copyWith(color: AppColors.primary)),
+                        ],
                       ),
                     ],
                   ),
@@ -91,46 +107,80 @@ class ProfileView extends GetView<ProfileController> {
 
                 Text('Financial Summary', style: AppTextStyles.heading5),
                 const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.grey200),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                if (financialSummary['buyer'] != null)
+                  _buildFinancialCard(
+                    title: 'Buyer Summary',
+                    icon: Icons.shopping_cart,
+                    color: AppColors.primary,
                     children: [
-                      if (financialSummary['buyer'] != null) ...[
-                        _buildInfoRow(
-                          'Wallet Balance (Buyer)',
-                          'Rp ${financialSummary['buyer']['walletBalance'] ?? 0}',
+                      _buildInfoRow(
+                        'Wallet Balance',
+                        currencyFormatter.format(
+                          financialSummary['buyer']['walletBalance'] ?? 0,
                         ),
-                        const SizedBox(height: 8),
-                      ],
-                      if (financialSummary['seller'] != null) ...[
-                        _buildInfoRow(
-                          'Total Income (Seller)',
-                          'Rp ${financialSummary['seller']['totalIncome'] ?? 0}',
+                        isHighlighted: true,
+                      ),
+                      const Divider(height: 24),
+                      _buildInfoRow(
+                        'Total Spending',
+                        currencyFormatter.format(
+                          financialSummary['buyer']['totalSpending'] ?? 0,
                         ),
-                        const SizedBox(height: 8),
-                        _buildInfoRow(
-                          'Store Name',
-                          financialSummary['seller']['store']?['name'] ??
-                              'Not setup',
-                        ),
-                      ],
-                      if (financialSummary.isEmpty)
-                        Text(
-                          'No financial data available',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
+                      ),
                     ],
                   ),
-                ),
+                if (financialSummary['seller'] != null)
+                  _buildFinancialCard(
+                    title: 'Seller Summary',
+                    icon: Icons.storefront,
+                    color: AppColors.secondary,
+                    children: [
+                      _buildInfoRow(
+                        'Total Income',
+                        currencyFormatter.format(
+                          financialSummary['seller']['totalIncome'] ?? 0,
+                        ),
+                        isHighlighted: true,
+                      ),
+                      const Divider(height: 24),
+                      _buildInfoRow(
+                        'Store Name',
+                        (financialSummary['seller']['store']?['name'] as String?)?.unescapeHtml ??
+                            'Not setup',
+                      ),
+                    ],
+                  ),
+                if (financialSummary['driver'] != null)
+                  _buildFinancialCard(
+                    title: 'Driver Summary',
+                    icon: Icons.local_shipping,
+                    color: AppColors.alternative,
+                    children: [
+                      _buildInfoRow(
+                        'Total Earnings',
+                        currencyFormatter.format(
+                          financialSummary['driver']['totalEarnings'] ?? 0,
+                        ),
+                        isHighlighted: true,
+                      ),
+                    ],
+                  ),
+                if (financialSummary.isEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.grey200),
+                    ),
+                    child: Text(
+                      'No financial data available',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 32),
 
                 Text('My Account', style: AppTextStyles.heading5),
@@ -180,6 +230,16 @@ class ProfileView extends GetView<ProfileController> {
                     title: 'Change Role',
                     subtitle: 'Switch between your available roles',
                     onTap: () => Get.toNamed('/role-selection'),
+                  ),
+                ],
+                if ((user['roles'] as List<dynamic>?) != null &&
+                    !(user['roles'] as List<dynamic>).contains('BUYER')) ...[
+                  const SizedBox(height: 12),
+                  _buildSettingItem(
+                    icon: Icons.shopping_cart,
+                    title: 'Become a Buyer',
+                    subtitle: 'Start buying products on Seapedia',
+                    onTap: () => controller.addRole('BUYER'),
                   ),
                 ],
                 if ((user['roles'] as List<dynamic>?) != null &&
@@ -338,6 +398,44 @@ class ProfileView extends GetView<ProfileController> {
             const Icon(Icons.chevron_right, color: AppColors.grey400),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFinancialCard({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required List<Widget> children,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Text(title, style: AppTextStyles.heading6),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
       ),
     );
   }
