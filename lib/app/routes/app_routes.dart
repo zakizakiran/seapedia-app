@@ -21,6 +21,8 @@ abstract class Routes {
   static const CHECKOUT = _Paths.CHECKOUT;
   static const ORDER_LIST = _Paths.ORDER_LIST;
   static const ORDER_DETAIL = _Paths.ORDER_DETAIL;
+  static const DRIVER_DASHBOARD = _Paths.DRIVER_DASHBOARD;
+  static const DRIVER_JOB_DETAIL = _Paths.DRIVER_JOB_DETAIL;
 }
 
 abstract class _Paths {
@@ -43,4 +45,6 @@ abstract class _Paths {
   static const CHECKOUT = '/checkout';
   static const ORDER_LIST = '/order-list';
   static const ORDER_DETAIL = '/order-detail';
+  static const DRIVER_DASHBOARD = '/driver-dashboard';
+  static const DRIVER_JOB_DETAIL = '/driver-job-detail';
 }

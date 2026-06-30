@@ -7,7 +7,7 @@ import '../models/product_model.dart';
 class ProductProvider {
   final Dio _dio = DioClient().dio;
 
-  Future<List<ProductModel>> getProducts({int page = 1, int limit = 12, String? search, String? storeId}) async {
+  Future<List<ProductModel>> getProducts({int page = 1, int limit = 12, String? search, String? storeId, String? category}) async {
     try {
       final Map<String, dynamic> queryParams = {
         'page': page,
@@ -20,6 +20,10 @@ class ProductProvider {
 
       if (storeId != null && storeId.isNotEmpty) {
         queryParams['storeId'] = storeId;
+      }
+
+      if (category != null && category.isNotEmpty && category != 'All') {
+        queryParams['category'] = category;
       }
 
       final response = await _dio.get(
@@ -38,7 +42,7 @@ class ProductProvider {
           reviewCount: 0,
           positiveReviewPercentage: 0,
           imageUrl: json['imageUrl'] ?? '',
-          category: 'All', 
+          category: json['category'] ?? 'All', 
           variations: [], 
           storeId: json['storeId'] ?? '',
           storeName: json['store']?['name'] ?? '',
@@ -85,6 +89,7 @@ class ProductProvider {
     required double price,
     required int stock,
     String? imageUrl,
+    String? category,
   }) async {
     try {
       await _dio.post(
@@ -95,6 +100,7 @@ class ProductProvider {
           'price': price,
           'stock': stock,
           if (imageUrl != null && imageUrl.isNotEmpty) 'imageUrl': imageUrl,
+          if (category != null && category.isNotEmpty) 'category': category,
         },
       );
     } on DioException catch (e) {
@@ -111,6 +117,7 @@ class ProductProvider {
     required double price,
     required int stock,
     String? imageUrl,
+    String? category,
   }) async {
     try {
       await _dio.put(
@@ -121,6 +128,7 @@ class ProductProvider {
           'price': price,
           'stock': stock,
           if (imageUrl != null && imageUrl.isNotEmpty) 'imageUrl': imageUrl,
+          if (category != null && category.isNotEmpty) 'category': category,
         },
       );
     } on DioException catch (e) {

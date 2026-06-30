@@ -48,8 +48,12 @@ class HomeTab extends GetView<HomeController> {
           const SizedBox(width: 8),
         ],
       ),
-      body: SingleChildScrollView(
-        controller: controller.scrollController,
+      body: RefreshIndicator(
+        onRefresh: controller.refreshData,
+        color: AppColors.primary,
+        child: SingleChildScrollView(
+          controller: controller.scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,10 +190,13 @@ class HomeTab extends GetView<HomeController> {
                 );
               }
               if (controller.products.isEmpty) {
-                return const Center(
+                return Center(
                   child: Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: Text('No products available'),
+                    padding: const EdgeInsets.all(32.0),
+                    child: Text(
+                      'Product not found',
+                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.textSecondary),
+                    ),
                   ),
                 );
               }
@@ -254,6 +261,7 @@ class HomeTab extends GetView<HomeController> {
             }),
           ],
         ),
+      ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import '../../core/utils/string_extensions.dart';
+
 class ProductModel {
   final String id;
   final String title;
@@ -36,8 +38,8 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id']?.toString() ?? '',
-      title: json['name'] ?? json['title'] ?? '',
-      description: json['description'] ?? '',
+      title: (json['name'] as String? ?? json['title'] as String? ?? '').unescapeHtml,
+      description: (json['description'] as String? ?? '').unescapeHtml,
       price: (json['price'] ?? 0).toDouble(),
       originalPrice: json['originalPrice']?.toDouble(),
       rating: (json['rating'] ?? 0).toDouble(),
@@ -47,7 +49,7 @@ class ProductModel {
       category: json['category'] ?? '',
       variations: List<String>.from(json['variations'] ?? []),
       storeId: json['storeId']?.toString() ?? '',
-      storeName: json['store']?['name'] ?? json['storeName'] ?? '',
+      storeName: (json['store']?['name'] as String? ?? json['storeName'] as String? ?? '').unescapeHtml,
       isOnSale: json['isOnSale'] ?? false,
       stock: json['stock'] ?? 0,
     );

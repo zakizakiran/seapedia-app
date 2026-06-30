@@ -34,6 +34,10 @@ import '../modules/order/bindings/order_binding.dart';
 import '../modules/order/views/order_list_view.dart';
 import '../modules/order/views/order_detail_view.dart';
 import '../data/services/auth_service.dart';
+import '../modules/driver_dashboard/bindings/driver_dashboard_binding.dart';
+import '../modules/driver_dashboard/views/driver_dashboard_view.dart';
+import '../modules/driver_job_detail/bindings/driver_job_detail_binding.dart';
+import '../modules/driver_job_detail/views/driver_job_detail_view.dart';
 
 part 'app_routes.dart';
 
@@ -53,6 +57,11 @@ class AppPages {
         if (user.activeRole == 'SELLER' ||
             (user.roles.contains('SELLER') && user.roles.length == 1)) {
           return Routes.SELLER_DASHBOARD;
+        }
+
+        if (user.activeRole == 'DRIVER' ||
+            (user.roles.contains('DRIVER') && user.roles.length == 1)) {
+          return Routes.DRIVER_DASHBOARD;
         }
       }
     }
@@ -151,6 +160,18 @@ class AppPages {
       name: _Paths.ORDER_DETAIL,
       page: () => const OrderDetailView(),
       binding: OrderBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.DRIVER_DASHBOARD,
+      page: () => const DriverDashboardView(),
+      binding: DriverDashboardBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.DRIVER_JOB_DETAIL,
+      page: () => const DriverJobDetailView(),
+      binding: DriverJobDetailBinding(),
       middlewares: [AuthMiddleware()],
     ),
   ];
