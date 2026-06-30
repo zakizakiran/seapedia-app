@@ -93,7 +93,10 @@ class LoginController extends GetxController {
       } else {
         final user = response.user;
         if (user != null) {
-          if (user.activeRole == 'SELLER' ||
+          if (user.activeRole == 'ADMIN' ||
+              (user.roles.contains('ADMIN') && user.roles.length == 1)) {
+            Get.offAllNamed('/admin-dashboard');
+          } else if (user.activeRole == 'SELLER' ||
               (user.roles.contains('SELLER') && user.roles.length == 1)) {
             Get.offAllNamed('/seller-dashboard');
           } else if (user.activeRole == 'DRIVER' ||

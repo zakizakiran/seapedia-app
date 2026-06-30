@@ -176,7 +176,7 @@ class WalletView extends GetView<WalletController> {
                 ),
                 title: Text(
                   (tx.description.isNotEmpty ? tx.description : tx.type)
-                      .replaceAll(RegExp(r'(?i)dummy\s*'), '')
+                      .replaceAll(RegExp(r'dummy\s*', caseSensitive: false), '')
                       .trim(),
                   style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
                 ),

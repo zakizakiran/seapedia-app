@@ -49,38 +49,24 @@ class LoginView extends GetView<LoginController> {
             Align(
               alignment: Alignment.topLeft,
               child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.white),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: AppColors.white,
+                ),
                 onPressed: () => Get.back(),
               ),
             ),
-            
+
           const SizedBox(height: 16),
 
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(Icons.shield, size: 40, color: AppColors.primary),
-          ),
+          Image.asset('assets/images/Logo.png', width: 80, fit: BoxFit.contain),
 
           const SizedBox(height: 32),
 
           Text(
             'Sign in to your\nAccount',
             textAlign: TextAlign.center,
-            style: AppTextStyles.heading2.copyWith(
-              color: AppColors.white,
-            ),
+            style: AppTextStyles.heading2.copyWith(color: AppColors.white),
           ),
 
           const SizedBox(height: 12),
@@ -105,7 +91,6 @@ class LoginView extends GetView<LoginController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-
           CustomTextField(
             controller: controller.emailController,
             focusNode: controller.emailFocusNode,
