@@ -99,7 +99,7 @@ Aplikasi ini mengadopsi pola arsitektur **GetX** (Model-View-Controller berbasis
 - `get` (^4.7.3), `dio` (^5.9.2)
 - `google_fonts`, `shared_preferences`, `intl`, `html_unescape`
 
-- ## Security Notes
+## Security Notes
 
 Aplikasi ini dibangun dengan *security measure*:
 - **SQL Injection**: Aman secara *default* karena Backend menggunakan *parameterized queries* ORM Prisma.
