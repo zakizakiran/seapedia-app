@@ -141,17 +141,6 @@ class LoginView extends GetView<LoginController> {
               ),
 
               const Spacer(),
-
-              GestureDetector(
-                onTap: controller.navigateToForgotPassword,
-                child: Text(
-                  'Forgot Password ?',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
             ],
           ),
 
