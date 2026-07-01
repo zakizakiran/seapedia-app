@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/string_extensions.dart';
 import '../../../data/models/store_model.dart';
 import '../../../data/providers/store_provider.dart';
 import '../../../data/providers/report_provider.dart';
@@ -43,8 +44,8 @@ class StoreProfileController extends GetxController {
       currentStore.value = store;
       
       if (store != null) {
-        nameController.text = store.name;
-        descriptionController.text = store.description;
+        nameController.text = store.name.unescapeHtml;
+        descriptionController.text = store.description.unescapeHtml;
         
         try {
           final incomeData = await _reportProvider.getSellerIncome();
