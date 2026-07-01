@@ -99,6 +99,15 @@ Aplikasi ini mengadopsi pola arsitektur **GetX** (Model-View-Controller berbasis
 - `get` (^4.7.3), `dio` (^5.9.2)
 - `google_fonts`, `shared_preferences`, `intl`, `html_unescape`
 
+## Security Notes
+
+Aplikasi ini dibangun dengan *security measure*:
+- **SQL Injection**: Aman secara *default* karena Backend menggunakan *parameterized queries* ORM Prisma.
+- **XSS Prevention**: Teks yang disuntik (khususnya *Public Application Review* atau nama dan deksripsi produk) diamankan pada server-side dengan logika *escape*, dan di-render normal tanpa bahaya eksekusi skrip lintas-situs oleh paket frontend `html_unescape`.
+- **Input Validation**: Frontend dan Backend bersama-sama menolak *form input* yang tidak logis, memberikan umpan balik (error UI) yang jelas.
+- **Session Behavior**: Manajemen sesi ditangani via **JWT**. Access Token digunakan secara berkala dan akan diperbarui otomatis oleh Refresh Token yang berjangka waktu wajar (*expiration rules*).
+- **Role-Based Access Control (RBAC)**: Validasi otoritas aksi tidak hanya dipercaya dari *Frontend UI*. Backend memiliki lapis keamanan (`AuthMiddleware`) untuk mengecek `Active Role` token secara independen untuk tiap rute terproteksi.
+
 ## End-to-End Testing Guide
 
 Gunakan alur ringkas ini untuk demonstrasi final E2E:
